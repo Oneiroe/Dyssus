@@ -21,10 +21,10 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	// Destroy the object
-	virtual void Destroy() override;
+	void Destroy();
 
 	// Destroy with "collision" property the object  
-	virtual void Destroy(Collision_object collision) override;
+	//virtual void Destroy(Collision_object collision) override;
 	
 	
 };
