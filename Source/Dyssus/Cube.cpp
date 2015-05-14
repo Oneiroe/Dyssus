@@ -24,15 +24,17 @@ ACube::ACube()
 	cubeMesh->SetStaticMesh(changableColorCubeMesh);
 
 	// Attach the mesh the the root component
+	cubeMesh->SetSimulatePhysics(true);
 	cubeMesh->AttachTo(RootComponent);
 	startingLocation = RootComponent->GetComponentTransform().GetLocation();
-
+	respawnLocation = startingLocation;
 }
 
-// Called when the game starts or when spawned
-void ACube::BeginPlay()
+// Constructor script launched at any changes of the object in the editor
+void ACube::OnConstruction(const FTransform& Transform)
 {
-	Super::BeginPlay();
+	Super::OnConstruction(Transform);
+
 	if (canChangeColor == true)
 	{
 		cubeMesh->SetStaticMesh(changableColorCubeMesh);
@@ -41,7 +43,16 @@ void ACube::BeginPlay()
 	{
 		cubeMesh->SetStaticMesh(permanentColorCubeMesh);
 	}
+	startingLocation = RootComponent->GetComponentTransform().GetLocation();
+	respawnLocation = startingLocation;
 	cubeMesh->SetMaterial(0,defaultColor);
+}
+
+// Called when the game starts or when spawned
+void ACube::BeginPlay()
+{
+	Super::BeginPlay();
+	
 	
 }
 
@@ -49,7 +60,6 @@ void ACube::BeginPlay()
 void ACube::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-	
 }
 
 UMaterial* ACube::getDefaultColor()
@@ -130,4 +140,18 @@ void ACube::setChangeColorOnRespawn(bool changeBehaviour)
 	changeColorOnRespawn = changeBehaviour;
 }
 
+bool ACube::getCanBeDestroyed()
+{
+	return canBeDestroyed;
+}
+
+void ACube::setCanBeDestroyed(bool changeBehaviour)
+{
+	canBeDestroyed = changeBehaviour;
+}
+
+void ACube::Destroy()
+{
+	if (canBeDestroyed == false) return;
+}
 

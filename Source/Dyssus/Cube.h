@@ -5,10 +5,12 @@
 #include "GameFramework/Actor.h"
 #include "Destroyable.h" 
 #include "Grabbable.h"
+#include "DestroyableInterface.h"
+#include "GrabbableInterface.h"
 //this MUST be le last include!
 #include "Cube.generated.h"
-UCLASS()
-class DYSSUS_API ACube : public AActor
+UCLASS(Blueprintable)
+class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGrabbableInterface
 	//, public ADestroyable, public AGrabbable
 {
 	GENERATED_BODY()
@@ -42,11 +44,12 @@ private:
 	bool canChangeColor=true;
 	
 	// Initial location of the cube on level start
+	UPROPERTY(VisibleAnywhere)
 	FVector startingLocation;
 
 	// location that the cube will reach on respawn
 	UPROPERTY(EditAnywhere)
-	FVector respawnLocation=startingLocation;
+	FVector respawnLocation;
 
 	// define if the cube will be respawned or permanently destroyed
 	UPROPERTY(EditAnywhere)
@@ -55,7 +58,11 @@ private:
 	// define if the cube will change the current color on respawn or not
 	UPROPERTY(EditAnywhere)
 	bool changeColorOnRespawn=false;
-	
+
+	// define if the cube can be destroyed or not
+	UPROPERTY(EditAnywhere)
+	bool canBeDestroyed=true;
+
 	// define if the cube will be respawned at his starting location or at the respawn one
 	//UPROPERTY(EditAnywhere)
 	//bool change_location_on_respawn = true;
@@ -122,6 +129,17 @@ public:
 
 	// edit if the cube can change color on respawn or not
 	void setChangeColorOnRespawn(bool changeBehaviour);
+
+	// retrun if the cube can be destroyed or not
+	bool getCanBeDestroyed();
+
+	// edit if the cube can be destroyed or not
+	void setCanBeDestroyed(bool changeBehaviour);
+
+// From IDestroyableInterface
+	virtual void Destroy() override;
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 	// return if the cube change location on respawn or not
 	//bool get_change_location_on_respawn();
