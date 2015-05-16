@@ -4,7 +4,7 @@
 #include "DestroyableInterface.generated.h"
 
 /** Class needed to support InterfaceCast<IDestroyableInterface>(Object) */
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI,Blueprintable)
 class UDestroyableInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
@@ -15,5 +15,6 @@ class IDestroyableInterface
 	GENERATED_IINTERFACE_BODY()
 
 public:
+	// launch the destroy function of the destroyable object
 	virtual void Destroy();
 };

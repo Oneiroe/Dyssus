@@ -5,7 +5,7 @@
 #include "GrabbableInterface.generated.h"
 
 /** Class needed to support InterfaceCast<IGrabbableInterface>(Object) */
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, Blueprintable)
 class UGrabbableInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
