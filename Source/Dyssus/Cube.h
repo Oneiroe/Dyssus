@@ -3,15 +3,12 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Destroyable.h" 
-#include "Grabbable.h"
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
 //this MUST be le last include!
 #include "Cube.generated.h"
 UCLASS(Blueprintable)
 class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGrabbableInterface
-	//, public ADestroyable, public AGrabbable
 {
 	GENERATED_BODY()
 
