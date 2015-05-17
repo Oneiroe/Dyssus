@@ -3,7 +3,7 @@
 #include "Dyssus.h"
 #include "DGameMode.h"
 
-ADGameMode::ADGameMode(const class FObjectInitializer& ObjectInitializer)
+ADGameMode::ADGameMode(const class FObjectInitializer& ObjectInitializer) 
 	: Super(ObjectInitializer)
 {
 	// set default pawn class to our Blueprinted character

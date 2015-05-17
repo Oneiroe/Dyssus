@@ -7,19 +7,19 @@
 // Sets default values
 ACube::ACube()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	// Creating dummy root component
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CubeRootComponent"));
-	
+
 	// Initializing the real mesh of the cube and the default meshes for cubes and permanent cubes
 	cubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CubeMesh"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> cubeAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color.Shape_Cube_Changable_Color"));
 	changableColorCubeMesh = cubeAsset.Object;
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> cubePermanentAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent.Shape_Cube_Permanent"));
 	permanentColorCubeMesh = cubePermanentAsset.Object;
-	
+
 	// to let designer work initialyze the mesh to the changable one, it will be override on BeginPlay
 	cubeMesh->SetStaticMesh(changableColorCubeMesh);
 
@@ -45,21 +45,21 @@ void ACube::OnConstruction(const FTransform& Transform)
 	}
 	startingLocation = RootComponent->GetComponentTransform().GetLocation();
 	respawnLocation = startingLocation;
-	cubeMesh->SetMaterial(0,defaultColor);
+	cubeMesh->SetMaterial(0, defaultColor);
 }
 
 // Called when the game starts or when spawned
 void ACube::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
+
+
 }
 
 // Called every frame
-void ACube::Tick( float DeltaTime )
+void ACube::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 }
 
 UMaterial* ACube::getDefaultColor()
@@ -154,4 +154,3 @@ void ACube::Destroy()
 {
 	if (canBeDestroyed == false) return;
 }
-

@@ -6,7 +6,7 @@
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
 //this MUST be le last include!
-#include "Cube.generated.h"
+#include "Cube.generated.h"   
 UCLASS(Blueprintable)
 class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGrabbableInterface
 {
@@ -14,51 +14,51 @@ class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGr
 
 private:
 	//FString pathChangeColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cylinder.Shape_Cylinder");
-	
+
 	// mesh of a normal cube that can change color
 	UPROPERTY(EditAnywhere)
-	UStaticMesh* changableColorCubeMesh;
-	
+		UStaticMesh* changableColorCubeMesh;
+
 	//FString pathPermanentColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cube.Shape_Cube");
-	
+
 	// mesh of a cube that can't change color
 	UPROPERTY(EditAnywhere)
-	UStaticMesh* permanentColorCubeMesh;
+		UStaticMesh* permanentColorCubeMesh;
 
 	// mesh component of the cube (variable which respect to "canChangeColor" variable)
 	UPROPERTY()
-	UStaticMeshComponent* cubeMesh;
+		UStaticMeshComponent* cubeMesh;
 
 	// material that define the inizial and default color of a cube
 	UPROPERTY(EditAnywhere)
-	UMaterial* defaultColor;
+		UMaterial* defaultColor;
 
 	// material that define the current color of a cube
 	UMaterial* current_color;
 
 	// define if the cube is a permanent one or not
 	UPROPERTY(EditAnywhere)
-	bool canChangeColor=true;
-	
+		bool canChangeColor = true;
+
 	// Initial location of the cube on level start
 	UPROPERTY(VisibleAnywhere)
-	FVector startingLocation;
+		FVector startingLocation;
 
 	// location that the cube will reach on respawn
 	UPROPERTY(EditAnywhere)
-	FVector respawnLocation;
+		FVector respawnLocation;
 
 	// define if the cube will be respawned or permanently destroyed
 	UPROPERTY(EditAnywhere)
-	bool respawnable=true;
-	
+		bool respawnable = true;
+
 	// define if the cube will change the current color on respawn or not
 	UPROPERTY(EditAnywhere)
-	bool changeColorOnRespawn=false;
+		bool changeColorOnRespawn = false;
 
 	// define if the cube can be destroyed or not
 	UPROPERTY(EditAnywhere)
-	bool canBeDestroyed=true;
+		bool canBeDestroyed = true;
 
 	// define if the cube will be respawned at his starting location or at the respawn one
 	//UPROPERTY(EditAnywhere)
@@ -67,15 +67,15 @@ private:
 	// respawns the cube with the property set on construction
 	void respawn();
 
-public:	
+public:
 	// Sets default values for this actor's properties
 	ACube();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	//Costructors
 	/*
@@ -84,13 +84,13 @@ public:
 	permanent_Cube(FColor defaultColor, FVector startingLocation);
 	permanent_Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool changeColorOnRespawn, bool change_location_on_respawn);
 	*/
-	
+
 	// Returns the default/initial color of the cube
 	UMaterial* getDefaultColor();
 
 	// Edit the default coloro of the cube
 	void setDefaultColor(UMaterial* newDefaultColor);
-	
+
 	// Returns the current color of the cube
 	UMaterial* getCurrentColor();
 
@@ -102,7 +102,7 @@ public:
 
 	// make the cube color changing possible or not
 	void setCanChangeColor(bool changeBehaviour);
-	
+
 	// return the starting location of the cube
 	FVector getStartingLocation();
 
@@ -117,7 +117,7 @@ public:
 
 	// returns if the cube can be respawned or not
 	bool getRespawnable();
-	
+
 	// edit if the cube can be respawned or not
 	void setRespawnable(bool changeBehaviour);
 
@@ -133,20 +133,20 @@ public:
 	// edit if the cube can be destroyed or not
 	void setCanBeDestroyed(bool changeBehaviour);
 
-// From IDestroyableInterface
+	// From IDestroyableInterface
 	virtual void Destroy() override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	// return if the cube change location on respawn or not
 	//bool get_change_location_on_respawn();
-	
+
 	// edit if the cube change location on respawn or not
 	//void set_change_location_on_respawn(bool changeBehaviour);
-	
+
 	//Mesh get_mesh();
 	//void set_mesh(Mesh new_mesh);
 
 	//void destroy(Collision_object collision);
-	
+
 };

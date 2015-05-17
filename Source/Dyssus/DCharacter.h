@@ -5,7 +5,7 @@
 class UInputComponent;
 
 UCLASS(config = Game)
-class ADCharacter : public ACharacter
+class ADCharacter : public ACharacter  
 {
 	GENERATED_BODY()
 

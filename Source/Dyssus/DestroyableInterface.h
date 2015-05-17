@@ -4,7 +4,7 @@
 #include "DestroyableInterface.generated.h"
 
 /** Class needed to support InterfaceCast<IDestroyableInterface>(Object) */
-UINTERFACE(MinimalAPI,Blueprintable)
+UINTERFACE(MinimalAPI, Blueprintable) 
 class UDestroyableInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()

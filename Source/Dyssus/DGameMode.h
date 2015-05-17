@@ -9,7 +9,7 @@
  * 
  */
 UCLASS()
-class DYSSUS_API ADGameMode : public AGameMode
+class DYSSUS_API ADGameMode : public AGameMode 
 {
 	GENERATED_BODY()
 	

@@ -50,7 +50,7 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	// set up gameplay key bindings
-	check(InputComponent);
+	check(InputComponent); 
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
