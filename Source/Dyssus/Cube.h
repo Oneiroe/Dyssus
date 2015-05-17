@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
+#include "Engine/DestructibleMesh.h"
 //this MUST be le last include!
 #include "Cube.generated.h"
 UCLASS(Blueprintable)
@@ -25,9 +26,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	UStaticMesh* permanentColorCubeMesh;
 
-	// mesh component of the cube (variable which respect to "canChangeColor" variable)
-	UPROPERTY()
-	UStaticMeshComponent* cubeMesh;
+	// mesh of an undestroyable cube that can change color
+	UPROPERTY(EditAnywhere)
+	UDestructibleMesh* destroyableChangableColorCubeMesh;
+	
+	// mesh of an undestroyable cube that can't change color
+	UPROPERTY(EditAnywhere)
+	UDestructibleMesh* destroyablePermanentColorCubeMesh;
 
 	// material that define the inizial and default color of a cube
 	UPROPERTY(EditAnywhere)
@@ -52,17 +57,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool respawnable=true;
 	
-	// define if the cube will change the current color on respawn or not
+	// define if the cube will maintain the current color on respawn or turn back tu the default one
 	UPROPERTY(EditAnywhere)
-	bool changeColorOnRespawn=false;
+	bool maintainColorOnRespawn=false;
 
 	// define if the cube can be destroyed or not
 	UPROPERTY(EditAnywhere)
 	bool canBeDestroyed=true;
 
 	// define if the cube will be respawned at his starting location or at the respawn one
-	//UPROPERTY(EditAnywhere)
-	//bool change_location_on_respawn = true;
+	UPROPERTY(EditAnywhere)
+	bool useStartingLocationOnRespawn = true;
 
 	// respawns the cube with the property set on construction
 	void respawn();
@@ -80,9 +85,9 @@ public:
 	//Costructors
 	/*
 	Cube(FColor defaultColor, FVector startingLocation);
-	Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool changeColorOnRespawn, bool change_location_on_respawn);
+	Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool maintainColorOnRespawn, bool change_location_on_respawn);
 	permanent_Cube(FColor defaultColor, FVector startingLocation);
-	permanent_Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool changeColorOnRespawn, bool change_location_on_respawn);
+	permanent_Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool maintainColorOnRespawn, bool change_location_on_respawn);
 	*/
 	
 	// Returns the default/initial color of the cube
@@ -122,10 +127,10 @@ public:
 	void setRespawnable(bool changeBehaviour);
 
 	// returnn if the cube change color on the respawn or not
-	bool getChangeColorOnRespawn();
+	bool getMaintainColorOnRespawn();
 
 	// edit if the cube can change color on respawn or not
-	void setChangeColorOnRespawn(bool changeBehaviour);
+	void setMaintainColorOnRespawn(bool changeBehaviour);
 
 	// retrun if the cube can be destroyed or not
 	bool getCanBeDestroyed();
@@ -133,16 +138,26 @@ public:
 	// edit if the cube can be destroyed or not
 	void setCanBeDestroyed(bool changeBehaviour);
 
-// From IDestroyableInterface
+	// From IDestroyableInterface
 	virtual void Destroy() override;
 
+	// To apply editor changes at realtime
 	virtual void OnConstruction(const FTransform& Transform) override;
+	
+	// executed immediately before gameplay begins
+	virtual void PreInitializeComponents() override;
+
+	// other editor modifier
+	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
+	// on actor transform move in editor
+	virtual void PostEditMove(bool bFinished) override;
 
 	// return if the cube change location on respawn or not
-	//bool get_change_location_on_respawn();
+	bool getUseStartingLocationOnRespawn();
 	
 	// edit if the cube change location on respawn or not
-	//void set_change_location_on_respawn(bool changeBehaviour);
+	void setUseStartingLocationOnRespawn(bool changeBehaviour);
 	
 	//Mesh get_mesh();
 	//void set_mesh(Mesh new_mesh);
