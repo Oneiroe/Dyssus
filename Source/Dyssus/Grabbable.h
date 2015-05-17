@@ -21,7 +21,5 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	// Make the object be grabbed by the character 
-	virtual void Grab() override;
-
-
+	virtual void Grab();
 };

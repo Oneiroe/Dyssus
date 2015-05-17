@@ -23,5 +23,7 @@ void AGrabbable::BeginPlay()
 void AGrabbable::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
+
+// The signature of this method has been added to resolve a build error, but its body has yet to be implemented
+void AGrabbable::Grab(){}
