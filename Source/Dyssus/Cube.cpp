@@ -84,6 +84,7 @@ void ACube::PostEditMove(bool bFinished)
 // executed immediately before gameplay begins
 void ACube::PreInitializeComponents()
 {
+	if (RootComponent->GetChildComponent(0)) RootComponent->GetChildComponent(0)->DestroyComponent();
 	if (canBeDestroyed == true)
 	{
 		UDestructibleComponent* cubeDestroyableMesh = NewObject<UDestructibleComponent>(this);
