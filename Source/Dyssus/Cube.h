@@ -39,7 +39,7 @@ private:
 	UMaterial* defaultColor;
 
 	// material that define the current color of a cube
-	UMaterial* current_color;
+	//UMaterial* current_color;
 
 	// define if the cube is a permanent one or not
 	UPROPERTY(EditAnywhere)
@@ -70,7 +70,7 @@ private:
 	bool useStartingLocationOnRespawn = true;
 
 	// respawns the cube with the property set on construction
-	void respawn();
+	void respawnCube();
 
 public:	
 	// Sets default values for this actor's properties
@@ -112,7 +112,7 @@ public:
 	FVector getStartingLocation();
 
 	// edit the starting location of the cube
-	void setStartingLocation(FVector newStartingLocation);
+	void setStartingLocation(FVector newStartingLocation);//REMOVE-PENDING
 
 	// return the respawn location
 	FVector getRespawnLocation();
@@ -131,6 +131,12 @@ public:
 
 	// edit if the cube can change color on respawn or not
 	void setMaintainColorOnRespawn(bool changeBehaviour);
+
+	// return if the cube change location on respawn or not
+	bool getUseStartingLocationOnRespawn();
+
+	// edit if the cube change location on respawn or not
+	void setUseStartingLocationOnRespawn(bool changeBehaviour);
 
 	// retrun if the cube can be destroyed or not
 	bool getCanBeDestroyed();
@@ -153,11 +159,6 @@ public:
 	// on actor transform move in editor
 	virtual void PostEditMove(bool bFinished) override;
 
-	// return if the cube change location on respawn or not
-	bool getUseStartingLocationOnRespawn();
-	
-	// edit if the cube change location on respawn or not
-	void setUseStartingLocationOnRespawn(bool changeBehaviour);
 	
 	//Mesh get_mesh();
 	//void set_mesh(Mesh new_mesh);
