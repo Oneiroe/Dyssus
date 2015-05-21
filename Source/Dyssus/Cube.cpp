@@ -3,6 +3,7 @@
 #include "Dyssus.h"
 #include "Cube.h"
 #include "UnrealString.h"
+
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White,text)
 
 // Sets default values
@@ -11,13 +12,6 @@ ACube::ACube()
 	UE_LOG(LogTemp, Warning, TEXT("ACube->constructor"));
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
-	
-	// Creating dummy root component
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CubeRootComponent"));
-
-	// Initializing the real mesh of the cube and the default meshes for cubes and permanent cubes
-	//cubeDestroyableMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestroyableComponent"));
-	//cubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CubeMesh"));
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> cubeAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color.Shape_Cube_Changable_Color"));
 	changableColorCubeMesh = cubeAsset.Object;
@@ -29,126 +23,13 @@ ACube::ACube()
 	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubePermanentDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent_DM.Shape_Cube_Permanent_DM"));
 	destroyablePermanentColorCubeMesh = cubePermanentDestroyableAsset.Object;
 
-	//startingLocation = RootComponent->GetComponentTransform().GetLocation();
-	//respawnLocation = startingLocation;
-}
-
-//void ACube::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-void ACube::OnConstruction(const FTransform& Transform)
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->OnConstruction"));
-	//	Super::OnConstruction(Transform);
-	UE_LOG(LogTemp, Warning, TEXT("ACube->OnConstruction->cube components:%d"), RootComponent->GetNumChildrenComponents());
-
-	//if (RootComponent->GetChildComponent(0)) RootComponent->GetChildComponent(0)->DestroyComponent();
-	if (RootComponent->GetNumChildrenComponents()>0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ACube->OnConstruction->removing %d child components"), RootComponent->GetNumChildrenComponents());
-		TArray< USceneComponent * > components;
-		RootComponent->GetChildrenComponents(true, components);
-		for (int i = 0; i < RootComponent->GetNumChildrenComponents(); i++)
-		{
-			components[i]->DestroyComponent();
-		}
-		UE_LOG(LogTemp, Warning, TEXT("ACube->OnConstruction->DONE! remaining child components: %d"), RootComponent->GetNumChildrenComponents());
-	}
-	if (canBeDestroyed == true)
-	{
-		UDestructibleComponent* cubeDestroyableMesh = NewObject<UDestructibleComponent>(this);
-		if (canChangeColor == true)
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyableChangableColorCubeMesh);
-		}
-		else
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyablePermanentColorCubeMesh);
-		}
-		cubeDestroyableMesh->SetSimulatePhysics(true);
-		cubeDestroyableMesh->SetMaterial(0, defaultColor);
-		cubeDestroyableMesh->AttachTo(RootComponent);
-		cubeDestroyableMesh->RegisterComponent();
-	}
-	else
-	{
-		UStaticMeshComponent* cubeMesh = NewObject<UStaticMeshComponent>(this);
-		
-		if (canChangeColor == true)
-		{
-			cubeMesh->SetStaticMesh(changableColorCubeMesh);
-		}
-		else
-		{
-			cubeMesh->SetStaticMesh(permanentColorCubeMesh);
-		}
-		cubeMesh->SetSimulatePhysics(true);
-		cubeMesh->SetMaterial(0, defaultColor);
-		cubeMesh->AttachTo(RootComponent);
-		cubeMesh->RegisterComponent();
-	}
-}
-
-// executed any time the object is moved in the editor
-void ACube::PostEditMove(bool bFinished)
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->PostEditMove"));
-	//Super::PostEditMove(bFinished);
-	startingLocation = RootComponent->GetComponentTransform().GetLocation();
-	if (useStartingLocationOnRespawn == true) respawnLocation = startingLocation;
-}
-
-// executed immediately before gameplay begins
-void ACube::PreInitializeComponents()
-{
-	UE_LOG(LogTemp, Warning, TEXT("PreInitializeComponents"));
-	
-	UE_LOG(LogTemp, Warning, TEXT("PreInitializeComponents->cube components:%d"), RootComponent->GetNumChildrenComponents());
-
-	if (RootComponent->GetChildComponent(0))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PreInitializeComponents->precedent component found"));
-		RootComponent->GetChildComponent(0)->DestroyComponent();
-	}
-	
-	if (canBeDestroyed == true)
-	{
-		UDestructibleComponent* cubeDestroyableMesh = NewObject<UDestructibleComponent>(this);
-		if (canChangeColor == true)
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyableChangableColorCubeMesh);
-		}
-		else
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyablePermanentColorCubeMesh);
-		}
-		cubeDestroyableMesh->SetSimulatePhysics(true);
-		cubeDestroyableMesh->SetMaterial(0, defaultColor);
-		cubeDestroyableMesh->AttachTo(RootComponent);
-		cubeDestroyableMesh->RegisterComponent();
-	}
-	else
-	{
-		UStaticMeshComponent* cubeMesh = NewObject<UStaticMeshComponent>(this);
-
-		if (canChangeColor == true)
-		{
-			cubeMesh->SetStaticMesh(changableColorCubeMesh);
-		}
-		else
-		{
-			cubeMesh->SetStaticMesh(permanentColorCubeMesh);
-		}
-		cubeMesh->SetSimulatePhysics(true);
-		cubeMesh->SetMaterial(0, defaultColor);
-		cubeMesh->AttachTo(RootComponent);
-		cubeMesh->RegisterComponent();
-	}
 }
 
 // Called when the game starts or when spawned
 void ACube::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Warning, TEXT("PLAY>cube components:%d"), RootComponent->GetNumChildrenComponents());
+	//UE_LOG(LogTemp, Warning, TEXT("PLAY>cube components:%d"), RootComponent->GetNumChildrenComponents());
 
 }
 
@@ -160,19 +41,23 @@ void ACube::Tick( float DeltaTime )
 
 UMaterial* ACube::getDefaultColor()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getDefaultColor()"));
 	return defaultColor;
 }
 
 void ACube::setDefaultColor(UMaterial* newDefaultColor)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setDefaultColor()"));
 	defaultColor = newDefaultColor;
 }
 
-//TO-VERIFY
+//TO-DO
 UMaterial* ACube::getCurrentColor()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getCurrentColor()"));
+	print("ACube->getCurrentColor()");
 	//UMaterial* res = cubeMesh->GetMaterial(0)->GetMaterial();
-	if (canBeDestroyed == true)
+	/*if (canBeDestroyed == true)
 	{
 		UDestructibleComponent* myComponent = Cast<UDestructibleComponent>(RootComponent->GetChildComponent(0));
 		return myComponent->GetMaterial(0)->GetMaterial();
@@ -181,34 +66,41 @@ UMaterial* ACube::getCurrentColor()
 	{
 		UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent->GetChildComponent(0));
 		return myComponent->GetMaterial(0)->GetMaterial();
-	}
+	}*/
+	return NULL;
 }
 
-//TO-VERIFY
+//TO-DO
 void ACube::setCurrentColor(UMaterial* newCurrentColor)
 {
-	if (canChangeColor == false) return;
-	if (canBeDestroyed == true)
-	{
-		UDestructibleComponent* myComponent=Cast<UDestructibleComponent>(RootComponent->GetChildComponent(0));
-		myComponent->SetMaterial(0,newCurrentColor);
-	}
-	else
-	{
-		UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent->GetChildComponent(0));
-		myComponent->SetMaterial(0, newCurrentColor);
-	}
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setCurrentColor()"));
+	print("ACube->setCurrentColor()");
+	//if (canChangeColor == false) return;
+	//if (canBeDestroyed == true)
+	//{
+	//	UDestructibleComponent* myComponent=Cast<UDestructibleComponent>(RootComponent->GetChildComponent(0));
+	//	myComponent->SetMaterial(0,newCurrentColor);
+	//}
+	//else
+	//{
+	//	UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent->GetChildComponent(0));
+	//	myComponent->SetMaterial(0, newCurrentColor);
+	//}
 }
 
 bool ACube::getCanChangeColor()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getCanChangeColor()"));
 	return canChangeColor;
 }
 
-//TO-VERIFY
+//TO-DO
 void ACube::setCanChangeColor(bool changeBehaviour)
 {
-	if (canChangeColor == changeBehaviour) return;
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanChangeColor()"));
+	print("ACube->setCanChangeColor()");
+	
+	/*if (canChangeColor == changeBehaviour) return;
 
 	if (canBeDestroyed == true)
 	{
@@ -235,69 +127,83 @@ void ACube::setCanChangeColor(bool changeBehaviour)
 			cubeMesh->SetStaticMesh(permanentColorCubeMesh);
 		}
 	}
-	canChangeColor = changeBehaviour;
+	canChangeColor = changeBehaviour;*/
 }
 
 FVector ACube::getStartingLocation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getStartingLocation()"));
 	return startingLocation;
 }
 
 // REMOVE-PENDING
 void ACube::setStartingLocation(FVector newStartingLocation)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setStartingLocation()"));
 	startingLocation = newStartingLocation;
 }
 
 FVector ACube::getRespawnLocation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getRespawnLocation()"));
 	return respawnLocation;
 }
 
 void ACube::setRespawnLocation(FVector new_location)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setRespawnLocation()"));
 	respawnLocation = new_location;
 }
 
 bool ACube::getRespawnable()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getRespawnable()"));
 	return respawnable;
 }
 
 void ACube::setRespawnable(bool changeBehaviour)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setRespawnable()"));
 	respawnable = changeBehaviour;
 }
 
 bool ACube::getMaintainColorOnRespawn()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getMaintainColorOnRespawn()"));
 	return maintainColorOnRespawn;
 }
 
 void ACube::setMaintainColorOnRespawn(bool changeBehaviour)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setMaintainColorOnRespawn()"));
 	maintainColorOnRespawn = changeBehaviour;
 }
 
 bool ACube::getUseStartingLocationOnRespawn()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getUseStartingLocationOnRespawn()"));
 	return useStartingLocationOnRespawn;
 }
 
 void ACube::setUseStartingLocationOnRespawn(bool changeBehaviour)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setUseStartingLocationOnRespawn()"));
 	useStartingLocationOnRespawn = changeBehaviour;
 }
 
 bool ACube::getCanBeDestroyed()
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACube->getCanBeDestroyed()"));
 	return canBeDestroyed;
 }
 
-//TO-VERIFY
+//TO-DO
 void ACube::setCanBeDestroyed(bool changeBehaviour)
 {
-	if (canBeDestroyed == changeBehaviour) return;
+	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanBeDestroyed()"));
+	print("ACube->setCanBeDestroyed()");
+	
+	/*if (canBeDestroyed == changeBehaviour) return;
 
 	UMaterial* currentColor = getCurrentColor();
 	if (RootComponent->GetChildComponent(0)) RootComponent->GetChildComponent(0)->DestroyComponent();
@@ -335,25 +241,28 @@ void ACube::setCanBeDestroyed(bool changeBehaviour)
 		cubeMesh->AttachTo(RootComponent);
 		cubeMesh->RegisterComponent();
 	}
-	canBeDestroyed = changeBehaviour;
+	canBeDestroyed = changeBehaviour;*/
 }
 
 //TO-DO
 void ACube::Destroy()
 {
-	if (canBeDestroyed == false) return;
-	if (respawnable)
-	{
-		respawnCube();
-	}
-	else
-	{
-		
-	}
+	UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
+	print("ACube->Destroy()");
+	//if (canBeDestroyed == false) return;
+	//if (respawnable)
+	//{
+	//	respawnCube();
+	//}
+	//else
+	//{
+	//	
+	//}
 }
 
 //TO-DO
 void ACube::respawnCube()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("ACube->respawnCube()"));
+	print("ACube->respawnCube()");
 }

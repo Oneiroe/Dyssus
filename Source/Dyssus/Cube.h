@@ -16,24 +16,6 @@ class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGr
 private:
 	//FString pathChangeColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cylinder.Shape_Cylinder");
 	
-	// mesh of a normal cube that can change color
-	UPROPERTY(EditAnywhere)
-	UStaticMesh* changableColorCubeMesh;
-	
-	//FString pathPermanentColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cube.Shape_Cube");
-	
-	// mesh of a cube that can't change color
-	UPROPERTY(EditAnywhere)
-	UStaticMesh* permanentColorCubeMesh;
-
-	// mesh of an undestroyable cube that can change color
-	UPROPERTY(EditAnywhere)
-	UDestructibleMesh* destroyableChangableColorCubeMesh;
-	
-	// mesh of an undestroyable cube that can't change color
-	UPROPERTY(EditAnywhere)
-	UDestructibleMesh* destroyablePermanentColorCubeMesh;
-
 	// material that define the inizial and default color of a cube
 	UPROPERTY(EditAnywhere)
 	UMaterial* defaultColor;
@@ -43,8 +25,9 @@ private:
 
 	// define if the cube is a permanent one or not
 	UPROPERTY(EditAnywhere)
-	bool canChangeColor=true;
-	
+	bool canChangeColor;
+	//bool canChangeColor = true;
+
 	// Initial location of the cube on level start
 	UPROPERTY(VisibleAnywhere)
 	FVector startingLocation;
@@ -55,24 +38,47 @@ private:
 
 	// define if the cube will be respawned or permanently destroyed
 	UPROPERTY(EditAnywhere)
-	bool respawnable=true;
+	bool respawnable;
+	//bool respawnable=true;
 	
 	// define if the cube will maintain the current color on respawn or turn back tu the default one
 	UPROPERTY(EditAnywhere)
-	bool maintainColorOnRespawn=false;
+	bool maintainColorOnRespawn;
+	//bool maintainColorOnRespawn = false;
 
 	// define if the cube can be destroyed or not
 	UPROPERTY(EditAnywhere)
-	bool canBeDestroyed=true;
+	bool canBeDestroyed;
+	//bool canBeDestroyed = true;
 
 	// define if the cube will be respawned at his starting location or at the respawn one
 	UPROPERTY(EditAnywhere)
-	bool useStartingLocationOnRespawn = true;
+	bool useStartingLocationOnRespawn;
+	//bool useStartingLocationOnRespawn = true;
 
 	// respawns the cube with the property set on construction
 	void respawnCube();
 
 public:	
+
+	// mesh of a normal cube that can change color
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMesh* changableColorCubeMesh;
+
+	//FString pathPermanentColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cube.Shape_Cube");
+
+	// mesh of a cube that can't change color
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UStaticMesh* permanentColorCubeMesh;
+
+	// mesh of an undestroyable cube that can change color
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UDestructibleMesh* destroyableChangableColorCubeMesh;
+
+	// mesh of an undestroyable cube that can't change color
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		UDestructibleMesh* destroyablePermanentColorCubeMesh;
+
 	// Sets default values for this actor's properties
 	ACube();
 
@@ -167,16 +173,16 @@ public:
 	virtual void Destroy() override;
 
 	// To apply editor changes at realtime
-	virtual void OnConstruction(const FTransform& Transform) override;
+	//virtual void OnConstruction(const FTransform& Transform) override;
 	
 	// executed immediately before gameplay begins
-	virtual void PreInitializeComponents() override;
+	//virtual void PreInitializeComponents() override;
 
 	// other editor modifier
 	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	// on actor transform move in editor
-	virtual void PostEditMove(bool bFinished) override;
+	//virtual void PostEditMove(bool bFinished) override;
 
 	
 	//Mesh get_mesh();
