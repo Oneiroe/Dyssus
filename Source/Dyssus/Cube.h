@@ -91,60 +91,79 @@ public:
 	*/
 	
 	// Returns the default/initial color of the cube
+	UFUNCTION(BlueprintCallable,category="Cube")
 	UMaterial* getDefaultColor();
 
 	// Edit the default coloro of the cube
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setDefaultColor(UMaterial* newDefaultColor);
 	
 	// Returns the current color of the cube
+	UFUNCTION(BlueprintCallable,category="Cube")
 	UMaterial* getCurrentColor();
 
 	// Edit the current color of the cube
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setCurrentColor(UMaterial* newCurrentColor);
 
 	// retruns if the cube can change color or is a permanent one
+	UFUNCTION(BlueprintCallable,category="Cube")
 	bool getCanChangeColor();
 
 	// make the cube color changing possible or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setCanChangeColor(bool changeBehaviour);
 	
 	// return the starting location of the cube
+	UFUNCTION(BlueprintCallable,category="Cube")
 	FVector getStartingLocation();
 
 	// edit the starting location of the cube
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setStartingLocation(FVector newStartingLocation);//REMOVE-PENDING
 
 	// return the respawn location
+	UFUNCTION(BlueprintCallable,category="Cube")
 	FVector getRespawnLocation();
 
 	// edit the respawn location
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setRespawnLocation(FVector new_location);
 
 	// returns if the cube can be respawned or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	bool getRespawnable();
 	
 	// edit if the cube can be respawned or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setRespawnable(bool changeBehaviour);
 
 	// returnn if the cube change color on the respawn or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	bool getMaintainColorOnRespawn();
 
 	// edit if the cube can change color on respawn or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setMaintainColorOnRespawn(bool changeBehaviour);
 
 	// return if the cube change location on respawn or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	bool getUseStartingLocationOnRespawn();
 
 	// edit if the cube change location on respawn or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setUseStartingLocationOnRespawn(bool changeBehaviour);
 
 	// retrun if the cube can be destroyed or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	bool getCanBeDestroyed();
 
 	// edit if the cube can be destroyed or not
+	UFUNCTION(BlueprintCallable,category="Cube")
 	void setCanBeDestroyed(bool changeBehaviour);
 
 	// From IDestroyableInterface
+	UFUNCTION(BlueprintCallable, category = "Cube")
 	virtual void Destroy() override;
 
 	// To apply editor changes at realtime
