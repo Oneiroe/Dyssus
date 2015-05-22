@@ -3,6 +3,7 @@
 #include "DProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
+#include "DStaticLibrary.h"
 
 ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -58,6 +59,8 @@ void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponen
 	InputComponent->BindAction("Run", IE_Pressed, this, &ADCharacter::Run);
 	InputComponent->BindAction("Run", IE_Released, this, &ADCharacter::StopRunning);
 
+	InputComponent->BindAction("Take/Leave", IE_Pressed, this, &ADCharacter::GrabDropObject);
+
 	//InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ADCharacter::TouchStarted);
 	if (EnableTouchscreenMovement(InputComponent) == false)
 	{
@@ -76,21 +79,52 @@ void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponen
 	InputComponent->BindAxis("LookUpRate", this, &ADCharacter::LookUpAtRate);
 }
 
+void ADCharacter::GrabDropObject()
+{
+	switch (interactState)
+	{
+		// If Take/Leave button is pressed while gun is being held, the character puts it back
+		case ObjectInteractionState::GUN:
+			interactState = ObjectInteractionState::NONE;
+			Mesh1P->SetVisibility(false);
+
+			break;
+
+		// Character drops grabbed object
+		case ObjectInteractionState::OBJECT:
+			break;
+
+		// Check whether line trace intersects a 'grabbable' object. If so, character grabs it.
+		default:
+			break;
+	}
+}
+
 void ADCharacter::Run()
 {
-
+	// Smooth interpolation to faster run speed
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, sprintSpeed, GetWorld()->GetDeltaSeconds(), runWalkInterpSpeed);
 }
 
 void ADCharacter::StopRunning()
 {
+	// Smooth interpolation to slower walk speed
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, walkSpeed, GetWorld()->GetDeltaSeconds(), runWalkInterpSpeed);
 }
 
 void ADCharacter::OnFire()
 {
 	// Check whether gun timeout is over
-	if (!canShoot) return;
+	if (!canShoot || interactState == ObjectInteractionState::OBJECT) return;
+
+	// If character was not holding any object, he can pick his gun again
+	else if (interactState == ObjectInteractionState::NONE) 
+	{
+		interactState = ObjectInteractionState::GUN;
+		Mesh1P->SetVisibility(true);
+
+		return;
+	}
 
 	// Start timer for gun cooldown
 	canShoot = false;

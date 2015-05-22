@@ -1,4 +1,6 @@
 #pragma once
+
+#include "GrabbableInterface.h"
 #include "GameFramework/Character.h"
 #include "DCharacter.generated.h"
 
@@ -60,7 +62,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float runWalkInterpSpeed;
 
+	// Max distance for grabbing objects
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float grabDistance;
+
+	// Distance of grabbed object
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float armLength;
+
+	// Horizontal offset of grabbed object
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float armOffset;
+
+	// How much grabbed object gets pushed away
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float dropImpulseMultiplier;
+
 protected:
+
+	/** Reference to the object grabbed by the player */
+	UGrabbableInterface* grabbedObject;
 
 	/** Whether player can shoot a projectile */
 	bool canShoot;
@@ -68,11 +89,8 @@ protected:
 	/** Sets canShoot to true. It is called when gun cooldown expires */
 	void enableFiring();
 
-	/** Whether player is holding a Grabbable */
-	bool isHoldingObject;
-
-	/** Whether player is holding gun */
-	bool isHoldingGun;
+	/** Handles object interaction */
+	void GrabDropObject();
 
 	/** Fires a projectile. */
 	void OnFire();
@@ -113,6 +131,14 @@ protected:
 	void EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
 	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
 	TouchData	TouchItem;
+
+	enum ObjectInteractionState
+	{
+		GUN,
+		OBJECT,
+		NONE
+	};
+	ObjectInteractionState interactState;
 
 protected:
 	// APawn interface
