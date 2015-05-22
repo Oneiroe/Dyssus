@@ -89,8 +89,10 @@ protected:
 	/** Sets canShoot to true. It is called when gun cooldown expires */
 	void enableFiring();
 
-	/** Handles object interaction */
+	/** Handle object interaction */
 	void GrabDropObject();
+	void GrabObject(AActor* hitActor);
+	void DropObject();
 
 	/** Fires a projectile. */
 	void OnFire();

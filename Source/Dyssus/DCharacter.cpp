@@ -92,10 +92,30 @@ void ADCharacter::GrabDropObject()
 
 		// Character drops grabbed object
 		case ObjectInteractionState::OBJECT:
+			DropObject();
+			
 			break;
 
 		// Check whether line trace intersects a 'grabbable' object. If so, character grabs it.
+		case ObjectInteractionState::NONE:
 		default:
+			//location the PC is focused on
+			const FVector Start = GetActorLocation();
+			const FVector End = Start + GetControlRotation().Vector() * armLength;
+
+			// Trace data is stored here
+			FHitResult HitData(ForceInit);
+
+			if (UDStaticLibrary::Trace(GetWorld()->GetFirstPlayerController()->GetPawn(), Start, End, HitData))
+			{
+
+				AActor* hitActor = HitData.GetActor();
+				if (hitActor && hitActor->Implements<UGrabbableInterface>())
+				{
+					GrabObject(hitActor);
+				}
+			}
+
 			break;
 	}
 }

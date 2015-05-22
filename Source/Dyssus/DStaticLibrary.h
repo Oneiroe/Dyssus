@@ -13,7 +13,6 @@ class DYSSUS_API UDStaticLibrary : public UObject
 public:
 	GENERATED_UCLASS_BODY()
 
-protected:
 	static FORCEINLINE bool Trace(
 		AActor* ActorToIgnore,
 		const FVector& Start,
