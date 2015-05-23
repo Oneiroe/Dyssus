@@ -96,7 +96,11 @@ void ADCharacter::CarryObject()
 	if (grabbedObject)
 	{
 		FRotator newRotation = GetControlRotation();
-		FVector newLocation = GetActorLocation() + newRotation.Vector() * armLength;
+		FVector newLocation = 
+			GetActorLocation() + 
+			newRotation.Vector() * armLength + 
+			GetActorRightVector() * armOffsetH + 
+			FVector(0, 0, armOffsetV);
 
 		grabbedObject->SetActorLocationAndRotation(newLocation, newRotation);
 	}

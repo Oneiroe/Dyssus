@@ -74,7 +74,11 @@ public:
 
 	// Horizontal offset of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float armOffset;
+		float armOffsetH;
+
+	// Vertical offset of grabbed object
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float armOffsetV;
 
 	// How much grabbed object gets pushed away
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
