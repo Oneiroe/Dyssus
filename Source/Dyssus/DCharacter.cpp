@@ -43,6 +43,12 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 
 	// By default, Sprint Speed is twice Walk Speed
 	sprintSpeed = walkSpeed * 2;
+
+	// By default, character is wielding its gun
+	interactState = ObjectInteractionState::GUN;
+
+	// Arm length is set by default to 15m
+	armLength = 1500.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,6 +124,16 @@ void ADCharacter::GrabDropObject()
 
 			break;
 	}
+}
+
+void ADCharacter::GrabObject(AActor* hitActor)
+{
+	// TODO
+}
+
+void ADCharacter::DropObject()
+{
+	// TODO
 }
 
 void ADCharacter::Run()
