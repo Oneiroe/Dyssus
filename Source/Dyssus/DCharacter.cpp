@@ -43,6 +43,13 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 
 	// By default, Sprint Speed is twice Walk Speed
 	sprintSpeed = walkSpeed * 2;
+
+	// By default, character is wielding its gun
+	interactState = ObjectInteractionState::GUN;
+
+	grabDistance = 2000.f;
+	armLength = 1500.f;
+	dropImpulseMultiplier = 500000.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,6 +86,26 @@ void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponen
 	InputComponent->BindAxis("LookUpRate", this, &ADCharacter::LookUpAtRate);
 }
 
+void ADCharacter::Tick(float DeltaSeconds)
+{
+	CarryObject();
+}
+
+void ADCharacter::CarryObject()
+{
+	if (grabbedObject)
+	{
+		FRotator newRotation = GetControlRotation();
+		FVector newLocation = 
+			GetActorLocation() +
+			GetActorForwardVector() * armLength + 
+			GetActorRightVector() * armOffsetH + 
+			GetActorUpVector() * armOffsetV;
+
+		grabbedObject->SetActorLocationAndRotation(newLocation, newRotation);
+	}
+}
+
 void ADCharacter::GrabDropObject()
 {
 	switch (interactState)
@@ -101,7 +128,7 @@ void ADCharacter::GrabDropObject()
 		default:
 			//location the PC is focused on
 			const FVector Start = GetActorLocation();
-			const FVector End = Start + GetControlRotation().Vector() * armLength;
+			const FVector End = Start + GetControlRotation().Vector() * grabDistance;
 
 			// Trace data is stored here
 			FHitResult HitData(ForceInit);
@@ -112,12 +139,35 @@ void ADCharacter::GrabDropObject()
 				AActor* hitActor = HitData.GetActor();
 				if (hitActor && hitActor->Implements<UGrabbableInterface>())
 				{
+					// GrabObject(InterfaceCast<UGrabbableInterface>(hitActor));
 					GrabObject(hitActor);
 				}
 			}
 
 			break;
 	}
+}
+
+void ADCharacter::GrabObject(AActor* hitActor)
+{
+	grabbedObject = hitActor;
+	
+	UPrimitiveComponent* objectMesh = (UPrimitiveComponent*)grabbedObject->GetComponentsByClass(UPrimitiveComponent::StaticClass())[0];
+	objectMesh->SetSimulatePhysics(false);
+	
+	interactState = ObjectInteractionState::OBJECT;
+}
+
+void ADCharacter::DropObject()
+{
+	UPrimitiveComponent* objectMesh = (UPrimitiveComponent*)grabbedObject->GetComponentsByClass(UPrimitiveComponent::StaticClass())[0];
+	objectMesh->SetSimulatePhysics(true);
+
+	FVector forceVector = GetControlRotation().Vector() * dropImpulseMultiplier;
+	objectMesh->AddForce(forceVector);
+
+	grabbedObject = nullptr;
+	interactState = ObjectInteractionState::NONE;
 }
 
 void ADCharacter::Run()
