@@ -22,6 +22,8 @@ class ADCharacter : public ACharacter
 public:
 	ADCharacter(const FObjectInitializer& ObjectInitializer);
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
@@ -81,7 +83,7 @@ public:
 protected:
 
 	/** Reference to the object grabbed by the player */
-	UGrabbableInterface* grabbedObject;
+	AActor* grabbedObject;
 
 	/** Whether player can shoot a projectile */
 	bool canShoot;
@@ -93,6 +95,7 @@ protected:
 	void GrabDropObject();
 	void GrabObject(AActor* hitActor);
 	void DropObject();
+	void CarryObject();
 
 	/** Fires a projectile. */
 	void OnFire();
