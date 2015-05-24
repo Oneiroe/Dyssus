@@ -96,6 +96,7 @@ protected:
 	void enableFiring();
 
 	/** Handle object interaction */
+    bool CanGrab(AActor* hitActor);
 	void GrabDropObject();
 	void GrabObject(AActor* hitActor);
 	void DropObject();

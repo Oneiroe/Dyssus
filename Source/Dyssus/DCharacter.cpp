@@ -88,7 +88,7 @@ void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponen
 
 void ADCharacter::Tick(float DeltaSeconds)
 {
-	CarryObject();
+        CarryObject();
 }
 
 void ADCharacter::CarryObject()
@@ -126,14 +126,14 @@ void ADCharacter::GrabDropObject()
 		// Check whether line trace intersects a 'grabbable' object. If so, character grabs it.
 		case ObjectInteractionState::NONE:
 		default:
-			//location the PC is focused on
+			// Location the PC is focused on
 			const FVector Start = GetActorLocation();
 			const FVector End = Start + GetControlRotation().Vector() * grabDistance;
 
 			// Trace data is stored here
 			FHitResult HitData(ForceInit);
 
-			if (UDStaticLibrary::Trace(GetWorld()->GetFirstPlayerController()->GetPawn(), Start, End, HitData))
+			if (UDStaticLibrary::Trace(this, Start, End, HitData))
 			{
 
 				AActor* hitActor = HitData.GetActor();
@@ -148,8 +148,48 @@ void ADCharacter::GrabDropObject()
 	}
 }
 
+bool ADCharacter::CanGrab(AActor* hitActor)
+{
+    // Location the PC is focused on
+    const FVector Start = GetActorLocation();
+    // The vector points to the ground below the PC
+    const FVector End = Start + GetActorUpVector() * -1 * grabDistance;
+    
+    // Trace data is stored here
+    FHitResult HitData(ForceInit);
+    
+    if (UDStaticLibrary::Trace(this, Start, End, HitData))
+    {
+        
+        AActor* groundActor = HitData.GetActor();
+        if (hitActor == groundActor)
+        {
+            // The PC is trying to grab the grabbable it is sitting on
+            return false;
+        }
+        else
+        {
+            // The PC can grab the object: they are not sitting on it
+            return true;
+        }
+        
+    }
+    else
+    {
+        // The PC is not touching the ground -> can not grab objects
+        return false;
+    }
+    
+}
+
 void ADCharacter::GrabObject(AActor* hitActor)
 {
+    // The PC is trying to grab a Grabbable actor which cannot be grabbed
+    if(CanGrab(hitActor) == false)
+    {
+        return;
+    }
+    
 	grabbedObject = hitActor;
 	
 	UPrimitiveComponent* objectMesh = (UPrimitiveComponent*)grabbedObject->GetComponentsByClass(UPrimitiveComponent::StaticClass())[0];
