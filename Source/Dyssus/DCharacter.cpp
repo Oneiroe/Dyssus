@@ -48,7 +48,7 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	interactState = ObjectInteractionState::GUN;
 
 	grabDistance = 2000.f;
-	armLength = 1500.f;
+	armLength = 250.f;
 	dropImpulseMultiplier = 500000.f;
 }
 
@@ -98,9 +98,9 @@ void ADCharacter::CarryObject()
 		FRotator newRotation = GetControlRotation();
 		FVector newLocation = 
 			GetActorLocation() +
-			GetActorForwardVector() * armLength + 
-			GetActorRightVector() * armOffsetH + 
-			GetActorUpVector() * armOffsetV;
+			FirstPersonCameraComponent->GetForwardVector() * armLength + 
+			FirstPersonCameraComponent->GetRightVector() * armOffsetH +
+			FirstPersonCameraComponent->GetUpVector() * armOffsetV;
 
 		grabbedObject->SetActorLocationAndRotation(newLocation, newRotation);
 	}
