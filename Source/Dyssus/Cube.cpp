@@ -7,23 +7,23 @@
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White,text)
 
 // Sets default values
-ACube::ACube()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->constructor"));
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
-
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> cubeAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color.Shape_Cube_Changable_Color"));
-	changableColorCubeMesh = cubeAsset.Object;
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> cubePermanentAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent.Shape_Cube_Permanent"));
-	permanentColorCubeMesh = cubePermanentAsset.Object;
-
-	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubeDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color_DM.Shape_Cube_Changable_Color_DM"));
-	destroyableChangableColorCubeMesh = cubeDestroyableAsset.Object;
-	static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubePermanentDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent_DM.Shape_Cube_Permanent_DM"));
-	destroyablePermanentColorCubeMesh = cubePermanentDestroyableAsset.Object;
-
-}
+//ACube::ACube()
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("ACube->constructor"));
+// 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+//	//PrimaryActorTick.bCanEverTick = true;
+//
+//	//static ConstructorHelpers::FObjectFinder<UStaticMesh> cubeAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color.Shape_Cube_Changable_Color"));
+//	//changableColorCubeMesh = cubeAsset.Object;
+//	//static ConstructorHelpers::FObjectFinder<UStaticMesh> cubePermanentAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent.Shape_Cube_Permanent"));
+//	//permanentColorCubeMesh = cubePermanentAsset.Object;
+//
+//	//static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubeDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color_DM.Shape_Cube_Changable_Color_DM"));
+//	//destroyableChangableColorCubeMesh = cubeDestroyableAsset.Object;
+//	//static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubePermanentDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent_DM.Shape_Cube_Permanent_DM"));
+//	//destroyablePermanentColorCubeMesh = cubePermanentDestroyableAsset.Object;
+//
+//}
 
 // Called when the game starts or when spawned
 void ACube::BeginPlay()
@@ -52,41 +52,41 @@ void ACube::setDefaultColor(UMaterial* newDefaultColor)
 }
 
 //TO-DO
-UMaterial* ACube::getCurrentColor()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getCurrentColor()"));
-	print("ACube->getCurrentColor()");
-	//UMaterial* res = cubeMesh->GetMaterial(0)->GetMaterial();
-	/*if (canBeDestroyed == true)
-	{
-		UDestructibleComponent* myComponent = Cast<UDestructibleComponent>(RootComponent->GetChildComponent(0));
-		return myComponent->GetMaterial(0)->GetMaterial();
-	}
-	else
-	{
-		UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent->GetChildComponent(0));
-		return myComponent->GetMaterial(0)->GetMaterial();
-	}*/
-	return NULL;
-}
+//UMaterial* ACube::getCurrentColor()
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("ACube->getCurrentColor()"));
+//	print("ACube->getCurrentColor()");
+//	//UMaterial* res = cubeMesh->GetMaterial(0)->GetMaterial();
+//	//if (canBeDestroyed == true)
+//	//{
+//	//	UDestructibleComponent* myComponent = Cast<UDestructibleComponent>(RootComponent);
+//	//	return myComponent->GetMaterial(0)->GetMaterial();
+//	//}
+//	//else
+//	//{
+//	//	UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent);
+//	//	return myComponent->GetMaterial(0)->GetMaterial();
+//	//}
+//	return NULL;
+//}
 
 //TO-DO
-void ACube::setCurrentColor(UMaterial* newCurrentColor)
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setCurrentColor()"));
-	print("ACube->setCurrentColor()");
-	//if (canChangeColor == false) return;
-	//if (canBeDestroyed == true)
-	//{
-	//	UDestructibleComponent* myComponent=Cast<UDestructibleComponent>(RootComponent->GetChildComponent(0));
-	//	myComponent->SetMaterial(0,newCurrentColor);
-	//}
-	//else
-	//{
-	//	UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent->GetChildComponent(0));
-	//	myComponent->SetMaterial(0, newCurrentColor);
-	//}
-}
+//void ACube::setCurrentColor(UMaterial* newCurrentColor)
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("ACube->setCurrentColor()"));
+//	print("ACube->setCurrentColor()");
+//	//if (canChangeColor == false) return;
+//	//if (canBeDestroyed == true)
+//	//{
+//	//	UDestructibleComponent* myComponent=Cast<UDestructibleComponent>(RootComponent->GetChildComponent(0));
+//	//	myComponent->SetMaterial(0,newCurrentColor);
+//	//}
+//	//else
+//	//{
+//	//	UStaticMeshComponent* myComponent = Cast<UStaticMeshComponent>(RootComponent->GetChildComponent(0));
+//	//	myComponent->SetMaterial(0, newCurrentColor);
+//	//}
+//}
 
 bool ACube::getCanChangeColor()
 {

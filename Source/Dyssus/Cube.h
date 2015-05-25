@@ -5,12 +5,12 @@
 #include "GameFramework/Actor.h"
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
-#include "Engine/DestructibleMesh.h"
+//#include "Engine/DestructibleMesh.h"
 //this MUST be le last include!
 #include "Cube.generated.h"
 UCLASS(Blueprintable)
-class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGrabbableInterface
-{
+class DYSSUS_API ACube :  public ADestructibleActor, public IDestroyableInterface, public IGrabbableInterface
+{ //public AActor,
 	GENERATED_BODY()
 
 private:
@@ -80,7 +80,7 @@ public:
 		UDestructibleMesh* destroyablePermanentColorCubeMesh;
 
 	// Sets default values for this actor's properties
-	ACube();
+	//ACube();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -105,11 +105,11 @@ public:
 	void setDefaultColor(UMaterial* newDefaultColor);
 	
 	// Returns the current color of the cube
-	UFUNCTION(BlueprintCallable,category="Cube")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, category = "Cube")
 	UMaterial* getCurrentColor();
 
 	// Edit the current color of the cube
-	UFUNCTION(BlueprintCallable,category="Cube")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, category = "Cube")
 	void setCurrentColor(UMaterial* newCurrentColor);
 
 	// retruns if the cube can change color or is a permanent one
