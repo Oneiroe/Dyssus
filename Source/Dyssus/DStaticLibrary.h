@@ -13,6 +13,8 @@ class DYSSUS_API UDStaticLibrary : public UObject
 public:
 	GENERATED_UCLASS_BODY()
 
+    // Trace a RayCast ignoring ActorToIgnore, from Start to End,
+    // filling HitOut with data related to the hit
 	static bool Trace(
 		AActor* ActorToIgnore,
 		const FVector& Start,
@@ -21,4 +23,8 @@ public:
 		ECollisionChannel CollisionChannel = ECC_Pawn,
 		bool ReturnPhysMat = false
 		);
+
+    // Print debug messages on the top left corner
+    // of the screen. The default color fo the text is white
+    static void Print(FString Message, FColor TextColor = FColor::White);
 };
