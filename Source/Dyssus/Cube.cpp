@@ -82,7 +82,6 @@ void ACube::setDefaultColor(UMaterial* newDefaultColor)
 	defaultColor = newDefaultColor;
 }
 
-
 UMaterial* ACube::getCurrentColor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->getCurrentColor()"));
@@ -91,7 +90,6 @@ UMaterial* ACube::getCurrentColor()
 	this->GetComponents<UStaticMeshComponent>(Components);
 	return Components[0]->GetMaterial(0)->GetMaterial();
 }
-
 
 void ACube::setCurrentColor(UMaterial* newCurrentColor)
 {
@@ -109,7 +107,6 @@ bool ACube::getCanChangeColor()
 	return canChangeColor;
 }
 
-//TO-IMPROVE
 void ACube::setCanChangeColor(bool changeBehaviour)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanChangeColor()"));
@@ -196,7 +193,6 @@ bool ACube::getCanBeDestroyed()
 	return canBeDestroyed;
 }
 
-//TO-DO
 void ACube::setCanBeDestroyed(bool changeBehaviour)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanBeDestroyed()"));
@@ -259,27 +255,24 @@ void ACube::setCanBeDestroyed(bool changeBehaviour)
 //}
 
 //TO-DO
-void ACube::MyDestroy()
+void ACube::interfacedDestroy()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
-	//print("ACube->Destroy()");	
+	//print("ACube->Destroy()");
 	this->Destroy();
-	//if (respawnable)
-	//{
-	//	respawnCube();
-	//}
-	//else
-	//{
-	//	
-	//}
+	if (respawnable)
+	{
+		respawnCube();
+	}
+	
 }
 	
-void ACube::MyDestroy(FVector HitLocation, FVector NormalImpulse)
+void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
 		
 		if (canBeDestroyed == false) return;
-		GetWorldTimerManager().SetTimer(this, &ACube::MyDestroy, 2.0f);
+		GetWorldTimerManager().SetTimer(this, &ACube::interfacedDestroy, 2.0f);
 
 		TArray<UStaticMeshComponent*> Components;
 		this->GetComponents<UStaticMeshComponent>(Components);
@@ -318,5 +311,47 @@ void ACube::MyDestroy(FVector HitLocation, FVector NormalImpulse)
 void ACube::respawnCube()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->respawnCube()"));
-	print("ACube->respawnCube()");
+	
+	FVector location;
+	if (useStartingLocationOnRespawn == true)
+	{
+		location=startingLocation;
+	}
+	else
+	{
+		location = respawnLocation;		
+	}
+	ACube* respawnedCube = (ACube*)GetWorld()->SpawnActor(ACube::StaticClass(), &location);
+	
+	respawnedCube->setCanChangeColor(canChangeColor);	
+	TArray<UStaticMeshComponent*> Components;
+	respawnedCube->GetComponents<UStaticMeshComponent>(Components);
+	if (canChangeColor == true)
+	{
+		Components[0]->SetStaticMesh(changableColorCubeMesh);
+	}
+	else
+	{
+		Components[0]->SetStaticMesh(permanentColorCubeMesh);
+	}
+	if (maintainColorOnRespawn == true)
+	{
+		Components[0]->SetMaterial(0, defaultColor);
+	}
+	else
+	{
+		Components[0]->SetMaterial(0, defaultColor);
+	}
+	respawnedCube->setDefaultColor(defaultColor);
+
+	respawnedCube->setStartingLocation(location);
+	respawnedCube->setRespawnLocation(respawnLocation);
+	respawnedCube->setRespawnable(respawnable);
+	respawnedCube->setMaintainColorOnRespawn(maintainColorOnRespawn);
+	respawnedCube->setCanBeDestroyed(canBeDestroyed);
+	respawnedCube->setUseStartingLocationOnRespawn(useStartingLocationOnRespawn);
+	respawnedCube->changableColorCubeMesh = changableColorCubeMesh;
+	respawnedCube->permanentColorCubeMesh = permanentColorCubeMesh;
+	respawnedCube->destroyableChangableColorCubeMesh = destroyableChangableColorCubeMesh;
+	respawnedCube->destroyablePermanentColorCubeMesh = destroyablePermanentColorCubeMesh;
 }

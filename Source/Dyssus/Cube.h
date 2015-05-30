@@ -172,10 +172,10 @@ public:
 
 	// From IDestroyableInterface
 	//UFUNCTION(BlueprintCallable, category = "Cube")
-	virtual void MyDestroy() override;
+	virtual void interfacedDestroy() override;
 
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	virtual void MyDestroy(FVector HitLocation, FVector NormalImpulse) override;
+	virtual void interfacedDestroy(FVector HitLocation, FVector NormalImpulse) override;
 
 	// To apply editor changes at realtime
 	virtual void OnConstruction(const FTransform& Transform) override;

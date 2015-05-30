@@ -16,6 +16,6 @@ class IDestroyableInterface
 
 public:
 	// launch the destroy function of the destroyable object
-	virtual void MyDestroy();
-	virtual void MyDestroy(FVector HitLocation,	FVector NormalImpulse);
+	virtual void interfacedDestroy();
+	virtual void interfacedDestroy(FVector HitLocation, FVector NormalImpulse);
 };
