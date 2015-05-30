@@ -88,6 +88,7 @@ UMaterial* ACube::getCurrentColor()
 	//return this->GetDestructibleComponent()->GetMaterial(0)->GetMaterial();
 	TArray<UStaticMeshComponent*> Components;
 	this->GetComponents<UStaticMeshComponent>(Components);
+	if (Components.Num() < 1) return defaultColor;
 	return Components[0]->GetMaterial(0)->GetMaterial();
 }
 
@@ -98,6 +99,7 @@ void ACube::setCurrentColor(UMaterial* newCurrentColor)
 	//this->GetDestructibleComponent()->SetMaterial(0, newCurrentColor);
 	TArray<UStaticMeshComponent*> Components;
 	this->GetComponents<UStaticMeshComponent>(Components);
+	if (Components.Num() < 1) return;
 	Components[0]->SetMaterial(0, newCurrentColor);
 }
 
@@ -115,7 +117,7 @@ void ACube::setCanChangeColor(bool changeBehaviour)
 	
 	TArray<UStaticMeshComponent*> Components;
 	this->GetComponents<UStaticMeshComponent>(Components);
-	
+	if (Components.Num() < 1) return;
 	if (changeBehaviour == true)
 	{
 		Components[0]->SetStaticMesh(changableColorCubeMesh);
@@ -199,45 +201,6 @@ void ACube::setCanBeDestroyed(bool changeBehaviour)
 	//print("ACube->setCanBeDestroyed()");
 	
 	canBeDestroyed = changeBehaviour;
-	/*
-	if (canBeDestroyed == changeBehaviour) return;
-	UMaterial* currentColor = getCurrentColor();
-	if (RootComponent->GetChildComponent(0)) RootComponent->GetChildComponent(0)->DestroyComponent();
-	
-	if (changeBehaviour == true)
-	{
-		UDestructibleComponent* cubeDestroyableMesh = NewObject<UDestructibleComponent>(this);
-		if (canChangeColor == true)
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyableChangableColorCubeMesh);
-		}
-		else
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyablePermanentColorCubeMesh);
-		}
-		cubeDestroyableMesh->SetSimulatePhysics(true);
-		cubeDestroyableMesh->SetMaterial(0, currentColor);
-		cubeDestroyableMesh->AttachTo(RootComponent);
-		cubeDestroyableMesh->RegisterComponent();
-	}
-	else
-	{
-		UStaticMeshComponent* cubeMesh = NewObject<UStaticMeshComponent>(this);
-
-		if (canChangeColor == true)
-		{
-			cubeMesh->SetStaticMesh(changableColorCubeMesh);
-		}
-		else
-		{
-			cubeMesh->SetStaticMesh(permanentColorCubeMesh);
-		}
-		cubeMesh->SetSimulatePhysics(true);
-		cubeMesh->SetMaterial(0, currentColor);
-		cubeMesh->AttachTo(RootComponent);
-		cubeMesh->RegisterComponent();
-	}
-	canBeDestroyed = changeBehaviour;*/
 }
 
 //void ACube::ReceiveHit(
@@ -254,17 +217,15 @@ void ACube::setCanBeDestroyed(bool changeBehaviour)
 //	print("ACube->HIT()");
 //}
 
-//TO-DO
+
 void ACube::interfacedDestroy()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
-	//print("ACube->Destroy()");
 	this->Destroy();
 	if (respawnable)
 	{
 		respawnCube();
 	}
-	
 }
 	
 void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
@@ -276,6 +237,7 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 
 		TArray<UStaticMeshComponent*> Components;
 		this->GetComponents<UStaticMeshComponent>(Components);
+		if (Components.Num() < 1) return;
 		FTransform destructionTransform = Components[0]->GetComponentTransform();
 		UMaterial* currentColor = getCurrentColor();
 		Components[0]->DestroyComponent();
@@ -307,7 +269,7 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		//this->AActor::Destroy();
 	}
 
-//TO-DO
+
 void ACube::respawnCube()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->respawnCube()"));
@@ -326,6 +288,7 @@ void ACube::respawnCube()
 	respawnedCube->setCanChangeColor(canChangeColor);	
 	TArray<UStaticMeshComponent*> Components;
 	respawnedCube->GetComponents<UStaticMeshComponent>(Components);
+	if (Components.Num() < 1) return;
 	if (canChangeColor == true)
 	{
 		Components[0]->SetStaticMesh(changableColorCubeMesh);
