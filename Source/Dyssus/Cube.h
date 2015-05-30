@@ -9,8 +9,8 @@
 //this MUST be le last include!
 #include "Cube.generated.h"
 UCLASS(Blueprintable)
-class DYSSUS_API ACube :  public ADestructibleActor, public IDestroyableInterface, public IGrabbableInterface
-{ //public AActor,
+class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IGrabbableInterface
+{ //public ADestructibleActor
 	GENERATED_BODY()
 
 private:
@@ -71,22 +71,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMesh* permanentColorCubeMesh;
 
-	// mesh of an undestroyable cube that can change color
+	// mesh of an destroyable cube that can change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UDestructibleMesh* destroyableChangableColorCubeMesh;
 
-	// mesh of an undestroyable cube that can't change color
+	// mesh of an destroyable cube that can't change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UDestructibleMesh* destroyablePermanentColorCubeMesh;
 
 	// Sets default values for this actor's properties
-	//ACube();
+	ACube();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
+
+
 
 	//Costructors
 	/*
@@ -105,11 +107,11 @@ public:
 	void setDefaultColor(UMaterial* newDefaultColor);
 	
 	// Returns the current color of the cube
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, category = "Cube")
+	UFUNCTION(BlueprintCallable, category = "Cube")
 	UMaterial* getCurrentColor();
 
 	// Edit the current color of the cube
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, category = "Cube")
+	UFUNCTION(BlueprintCallable, category = "Cube")
 	void setCurrentColor(UMaterial* newCurrentColor);
 
 	// retruns if the cube can change color or is a permanent one
@@ -169,11 +171,14 @@ public:
 	void setCanBeDestroyed(bool changeBehaviour);
 
 	// From IDestroyableInterface
+	//UFUNCTION(BlueprintCallable, category = "Cube")
+	virtual void MyDestroy() override;
+
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	virtual void Destroy() override;
+	virtual void MyDestroy(FVector HitLocation, FVector NormalImpulse) override;
 
 	// To apply editor changes at realtime
-	//virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void OnConstruction(const FTransform& Transform) override;
 	
 	// executed immediately before gameplay begins
 	//virtual void PreInitializeComponents() override;
@@ -182,12 +187,19 @@ public:
 	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	// on actor transform move in editor
-	//virtual void PostEditMove(bool bFinished) override;
-
-	
-	//Mesh get_mesh();
-	//void set_mesh(Mesh new_mesh);
+	virtual void PostEditMove(bool bFinished) override;
 
 	//void destroy(Collision_object collision);
 	
+	// Called when trows hit collision
+	//virtual void ReceiveHit(
+	//class UPrimitiveComponent * MyComp,
+	//	AActor * Other,
+	//class UPrimitiveComponent * OtherComp,
+	//	bool bSelfMoved,
+	//	FVector HitLocation,
+	//	FVector HitNormal,
+	//	FVector NormalImpulse,
+	//	const FHitResult & Hit
+	//	) override;
 };

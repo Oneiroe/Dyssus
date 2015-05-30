@@ -8,6 +8,9 @@ UDestroyableInterface::UDestroyableInterface(const class FObjectInitializer& Obj
 {
 }
 
-void IDestroyableInterface::Destroy()
+void IDestroyableInterface::MyDestroy()
+{
+}
+void IDestroyableInterface::MyDestroy(FVector HitLocation, FVector NormalImpulse)
 {
 }
