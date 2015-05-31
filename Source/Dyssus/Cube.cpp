@@ -233,11 +233,13 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
 		
 		if (canBeDestroyed == false) return;
-		GetWorldTimerManager().SetTimer(this, &ACube::interfacedDestroy, 2.0f);
-
+		
 		TArray<UStaticMeshComponent*> Components;
 		this->GetComponents<UStaticMeshComponent>(Components);
 		if (Components.Num() < 1) return;
+
+		GetWorldTimerManager().SetTimer(this, &ACube::interfacedDestroy, 2.0f);
+		
 		FTransform destructionTransform = Components[0]->GetComponentTransform();
 		UMaterial* currentColor = getCurrentColor();
 		Components[0]->DestroyComponent();
@@ -252,7 +254,7 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		{
 			cubeDestroyableMesh->SetDestructibleMesh(destroyablePermanentColorCubeMesh);
 		}
-		//cubeDestroyableMesh->SetSimulatePhysics(true);
+		cubeDestroyableMesh->SetSimulatePhysics(true);
 		cubeDestroyableMesh->SetMaterial(0, currentColor);
 		cubeDestroyableMesh->RegisterComponent();
 		SetRootComponent(cubeDestroyableMesh);
