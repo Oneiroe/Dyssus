@@ -1,6 +1,7 @@
 #include "Dyssus.h"
 #include "DProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "DestroyableInterface.h"
 
 ADProjectile::ADProjectile(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -39,6 +40,13 @@ void ADProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVe
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
+
+		if (OtherActor->Implements<UDestroyableInterface>())
+		{
+			// TODO This needs some review, cube could absorb some damage before crumbling into pieces
+			UDestroyableInterface* destrActor = dynamic_cast<UDestroyableInterface*>(OtherActor);
+			destrActor->Destroy();
+		}
 
 		Destroy();
 	}

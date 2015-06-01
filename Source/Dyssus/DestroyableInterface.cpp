@@ -8,6 +8,11 @@ UDestroyableInterface::UDestroyableInterface(const class FObjectInitializer& Obj
 {
 }
 
+// TODO Most likely, there's no need for this definition
 void IDestroyableInterface::Destroy()
+{
+}
+
+void UDestroyableInterface::Destroy()
 {
 }
