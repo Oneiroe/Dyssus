@@ -8,10 +8,10 @@ ADGameMode::ADGameMode(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnObject(TEXT("/Game/FirstPersonBP/Blueprints/BP_DCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnObject(TEXT("/Game/Dyssus/Blueprints/BP_DCharacter"));
 	if (PlayerPawnObject.Class != NULL)
 	{
-		DefaultPawnClass = ADCharacter::StaticClass();
+		DefaultPawnClass = PlayerPawnObject.Class;
 	}
 }
 
