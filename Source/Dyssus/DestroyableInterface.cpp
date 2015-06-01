@@ -8,11 +8,18 @@ UDestroyableInterface::UDestroyableInterface(const class FObjectInitializer& Obj
 {
 }
 
-// TODO Most likely, there's no need for this definition
-void IDestroyableInterface::Destroy()
+void IDestroyableInterface::interfacedDestroy()
 {
 }
 
-void UDestroyableInterface::Destroy()
+void IDestroyableInterface::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
+{
+}
+
+void UDestroyableInterface::interfacedDestroy()
+{
+}
+
+void UDestroyableInterface::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 {
 }

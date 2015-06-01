@@ -44,3 +44,7 @@ bool UDStaticLibrary::Trace(
 	//Hit any Actor?
 	return (HitOut.GetActor() != NULL);
 }
+
+void UDStaticLibrary::Print(FString Message, FColor TextColor){
+    if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, TextColor, Message);
+}

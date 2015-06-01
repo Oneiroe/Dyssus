@@ -45,7 +45,7 @@ void ADProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVe
 		{
 			// TODO This needs some review, cube could absorb some damage before crumbling into pieces
 			UDestroyableInterface* destrActor = dynamic_cast<UDestroyableInterface*>(OtherActor);
-			destrActor->Destroy();
+			destrActor->interfacedDestroy();
 		}
 
 		Destroy();

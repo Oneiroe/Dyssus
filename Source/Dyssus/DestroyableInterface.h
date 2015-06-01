@@ -11,7 +11,8 @@ class UDestroyableInterface : public UInterface
 
 public:
 	// launch the destroy function of the destroyable object
-	virtual void Destroy();
+	virtual void interfacedDestroy();
+	virtual void interfacedDestroy(FVector HitLocation, FVector NormalImpulse);
 };
 
 class IDestroyableInterface
@@ -21,5 +22,6 @@ class IDestroyableInterface
 public:
 	// TODO Possible redundancy
 	// launch the destroy function of the destroyable object
-	virtual void Destroy();
+	virtual void interfacedDestroy();
+	virtual void interfacedDestroy(FVector HitLocation, FVector NormalImpulse);
 };
