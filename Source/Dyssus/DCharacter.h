@@ -83,7 +83,15 @@ public:
 	// How much grabbed object gets pushed away
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		float dropImpulseMultiplier;
-
+    
+    // How much the character can jump
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+    float jumpSpeed;
+    
+    // How much the character can jump
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
+    float airControl;
+    
 protected:
 
 	/** Reference to the object grabbed by the player */

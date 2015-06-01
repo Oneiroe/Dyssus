@@ -50,6 +50,14 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	grabDistance = 2000.f;
 	armLength = 250.f;
 	dropImpulseMultiplier = 500000.f;
+    
+    airControl = .5f;
+    jumpSpeed = 450.f;
+    
+    // Edit Character's default jump settings to handle air control and editable jump speed
+    CharacterMovement->AirControl = airControl;
+    CharacterMovement->JumpZVelocity = jumpSpeed;
+    
 }
 
 //////////////////////////////////////////////////////////////////////////
