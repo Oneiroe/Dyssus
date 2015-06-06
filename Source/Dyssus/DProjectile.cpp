@@ -36,13 +36,14 @@ ADProjectile::ADProjectile(const FObjectInitializer& ObjectInitializer)
 
 void ADProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Projectile->OnHit"));
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL))
 	{
 		if (OtherActor->Implements<UDestroyableInterface>())
 		{
 			// TODO This needs some review, cube could absorb some damage before crumbling into pieces
-			UDestroyableInterface* destrActor = dynamic_cast<UDestroyableInterface*>(OtherActor);
+			IDestroyableInterface* destrActor = dynamic_cast<IDestroyableInterface*>(OtherActor);
 			destrActor->interfacedDestroy(Hit.Location, NormalImpulse);
 		}
 		else if (OtherComp->IsSimulatingPhysics()) OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());

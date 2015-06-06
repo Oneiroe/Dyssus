@@ -9,16 +9,11 @@ class UDestroyableInterface : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 
-public:
-	// launch the destroy function of the destroyable object
-	virtual void interfacedDestroy();
-	virtual void interfacedDestroy(FVector HitLocation, FVector NormalImpulse);
 };
 
 class IDestroyableInterface
 {
 	GENERATED_IINTERFACE_BODY()
-
 public:
 	// TODO Possible redundancy
 	// launch the destroy function of the destroyable object

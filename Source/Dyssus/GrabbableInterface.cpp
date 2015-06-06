@@ -7,7 +7,3 @@ UGrabbableInterface::UGrabbableInterface(const class FObjectInitializer& ObjectI
 	: Super(ObjectInitializer)
 {
 }
-
-//IGrabbableInterface::~IGrabbableInterface()
-//{
-//}

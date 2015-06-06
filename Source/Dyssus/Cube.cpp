@@ -241,6 +241,10 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		GetWorldTimerManager().SetTimer(this, &ACube::interfacedDestroy, 2.0f);
 		
 		FTransform destructionTransform = Components[0]->GetComponentTransform();
+		if (maintainColorOnRespawn == true)
+		{
+			defaultColor = getCurrentColor();
+		}
 		UMaterial* currentColor = getCurrentColor();
 		Components[0]->DestroyComponent();
 
@@ -256,6 +260,7 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		}
 		cubeDestroyableMesh->SetSimulatePhysics(true);
 		cubeDestroyableMesh->SetMaterial(0, currentColor);
+		cubeDestroyableMesh->SetMaterial(1, currentColor);
 		cubeDestroyableMesh->RegisterComponent();
 		SetRootComponent(cubeDestroyableMesh);
 		RootComponent->SetVisibility(true);
@@ -267,7 +272,6 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		cubeDestroyableMesh->SetCollisionProfileName(TEXT("OverlapAll"));
 		//cubeDestroyableMesh->SetCollisionEnabled(false);;
 		//float startTime = GetWorld()->TimeSeconds;
-		//while ((GetWorld()->TimeSeconds) < startTime + 2.0){}
 		//this->AActor::Destroy();
 	}
 
@@ -299,14 +303,17 @@ void ACube::respawnCube()
 	{
 		Components[0]->SetStaticMesh(permanentColorCubeMesh);
 	}
-	if (maintainColorOnRespawn == true)
-	{
-		Components[0]->SetMaterial(0, defaultColor);
-	}
-	else
-	{
-		Components[0]->SetMaterial(0, defaultColor);
-	}
+	//if (maintainColorOnRespawn == true)
+	//{
+	//	Components[0]->SetMaterial(0, defaultColor);
+	//}
+	//else
+	//{
+	//	Components[0]->SetMaterial(0, defaultColor);
+	//}
+	
+	Components[0]->SetMaterial(0, defaultColor);
+
 	respawnedCube->setDefaultColor(defaultColor);
 
 	respawnedCube->setStartingLocation(location);

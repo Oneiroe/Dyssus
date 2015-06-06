@@ -15,11 +15,3 @@ void IDestroyableInterface::interfacedDestroy()
 void IDestroyableInterface::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 {
 }
-
-void UDestroyableInterface::interfacedDestroy()
-{
-}
-
-void UDestroyableInterface::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
-{
-}
