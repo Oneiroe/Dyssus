@@ -63,21 +63,21 @@ public:
 
 	// mesh of a normal cube that can change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UStaticMesh* changableColorCubeMesh;
+	UStaticMesh* changableColorCubeMesh;
 
 	//FString pathPermanentColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cube.Shape_Cube");
 
 	// mesh of a cube that can't change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UStaticMesh* permanentColorCubeMesh;
+	UStaticMesh* permanentColorCubeMesh;
 
 	// mesh of an destroyable cube that can change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UDestructibleMesh* destroyableChangableColorCubeMesh;
+	UDestructibleMesh* destroyableChangableColorCubeMesh;
 
 	// mesh of an destroyable cube that can't change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UDestructibleMesh* destroyablePermanentColorCubeMesh;
+	UDestructibleMesh* destroyablePermanentColorCubeMesh;
 
 	// Sets default values for this actor's properties
 	ACube();

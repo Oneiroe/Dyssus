@@ -95,6 +95,7 @@ UMaterial* ACube::getCurrentColor()
 void ACube::setCurrentColor(UMaterial* newCurrentColor)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->setCurrentColor()"));
+	if (canChangeColor == false) return;
 	//print("ACube->setCurrentColor()");
 	//this->GetDestructibleComponent()->SetMaterial(0, newCurrentColor);
 	TArray<UStaticMeshComponent*> Components;
@@ -112,7 +113,6 @@ bool ACube::getCanChangeColor()
 void ACube::setCanChangeColor(bool changeBehaviour)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanChangeColor()"));
-	print("ACube->setCanChangeColor()");
 	if (canChangeColor == changeBehaviour) return;
 	
 	TArray<UStaticMeshComponent*> Components;
