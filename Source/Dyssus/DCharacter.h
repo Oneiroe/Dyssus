@@ -94,8 +94,12 @@ public:
     
 protected:
 
+	/** Neat way for handling object dragging */
+	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
+	UPhysicsHandleComponent* physicsHandle;
+
 	/** Reference to the object grabbed by the player */
-	AActor* grabbedObject;
+	UPrimitiveComponent* grabbedObject;
 
 	/** Whether player can shoot a projectile */
 	bool canShoot;
@@ -106,7 +110,7 @@ protected:
 	/** Handle object interaction */
     bool CanGrab(AActor* hitActor);
 	void GrabDropObject();
-	void GrabObject(AActor* hitActor);
+	void GrabObject(FHitResult* hitData);
 	void DropObject();
 	void CarryObject();
 

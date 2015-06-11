@@ -9,3 +9,10 @@
 *.opensdf
 *.sdf
 *.sln
+
+*.zip
+*.pdf
+
+*.meta
+
+*.log

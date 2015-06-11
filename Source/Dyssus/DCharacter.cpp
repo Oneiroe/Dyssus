@@ -57,7 +57,14 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
     // Edit Character's default jump settings to handle air control and editable jump speed
     CharacterMovement->AirControl = airControl;
     CharacterMovement->JumpZVelocity = jumpSpeed;
-    
+
+	// How object should behave once grabbed
+	physicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+	physicsHandle->LinearDamping = 10000.f;
+	physicsHandle->LinearStiffness = 5000.f;
+	physicsHandle->AngularDamping = 10000.f;
+	physicsHandle->AngularStiffness = 5000.f;
+	physicsHandle->InterpolationSpeed = 5000.f;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,22 +103,18 @@ void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponen
 
 void ADCharacter::Tick(float DeltaSeconds)
 {
-	CarryObject();
+	if (interactState == ObjectInteractionState::OBJECT) CarryObject();
 }
 
 void ADCharacter::CarryObject()
 {
-	if (grabbedObject)
-	{
-		FRotator newRotation = GetControlRotation();
-		FVector newLocation = 
-			GetActorLocation() +
-			FirstPersonCameraComponent->GetForwardVector() * armLength + 
-			FirstPersonCameraComponent->GetRightVector() * armOffsetH +
-			FirstPersonCameraComponent->GetUpVector() * armOffsetV;
+	FVector newLocation =
+		GetActorLocation() +
+		FirstPersonCameraComponent->GetForwardVector() * armLength +
+		FirstPersonCameraComponent->GetRightVector() * armOffsetH +
+		FirstPersonCameraComponent->GetUpVector() * armOffsetV;
 
-		grabbedObject->SetActorLocationAndRotation(newLocation, newRotation);
-	}
+	physicsHandle->SetTargetLocationAndRotation(newLocation, GetControlRotation());
 }
 
 void ADCharacter::GrabDropObject()
@@ -146,10 +149,7 @@ void ADCharacter::GrabDropObject()
 
 				AActor* hitActor = HitData.GetActor();
 				if (hitActor && hitActor->Implements<UGrabbableInterface>())
-				{
-					// GrabObject(InterfaceCast<UGrabbableInterface>(hitActor));
-					GrabObject(hitActor);
-				}
+					GrabObject(&HitData);
 			}
 
 			break;
@@ -190,31 +190,34 @@ bool ADCharacter::CanGrab(AActor* hitActor)
     
 }
 
-void ADCharacter::GrabObject(AActor* hitActor)
+void ADCharacter::GrabObject(FHitResult* hitData)
 {
     // The PC is trying to grab a Grabbable actor which cannot be grabbed
-    if(CanGrab(hitActor) == false)
+	if (CanGrab((AActor*)&(hitData->Actor)) == false)
     {
         return;
     }
-    
-	grabbedObject = hitActor;
-	
-	UPrimitiveComponent* objectMesh = (UPrimitiveComponent*)grabbedObject->GetComponentsByClass(UPrimitiveComponent::StaticClass())[0];
-	objectMesh->SetSimulatePhysics(false);
-	
+
 	interactState = ObjectInteractionState::OBJECT;
+
+	grabbedObject = hitData->GetComponent();
+	grabbedObject->SetWorldRotation(GetControlRotation());
+
+	// Attach grabbable to character
+	physicsHandle->GrabComponent(grabbedObject, hitData->BoneName, hitData->Location, true);
+	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
+	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 }
 
 void ADCharacter::DropObject()
 {
-	UPrimitiveComponent* objectMesh = (UPrimitiveComponent*)grabbedObject->GetComponentsByClass(UPrimitiveComponent::StaticClass())[0];
-	objectMesh->SetSimulatePhysics(true);
+	physicsHandle->ReleaseComponent();
+	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Block);
 
 	FVector forceVector = GetControlRotation().Vector() * dropImpulseMultiplier;
-	objectMesh->AddForce(forceVector);
+	grabbedObject->AddForce(forceVector);
 
-	grabbedObject = nullptr;
 	interactState = ObjectInteractionState::NONE;
 }
 
