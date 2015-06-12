@@ -64,25 +64,40 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float runWalkInterpSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	USoundCue* concreteSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	USoundCue* grassSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	USoundCue* glassSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	USoundCue* woodSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	USoundCue* waterSound;
+
 	// Max distance for grabbing objects
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float grabDistance;
+	float grabDistance;
 
 	// Distance of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float armLength;
+	float armLength;
 
 	// Horizontal offset of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float armOffsetH;
+	float armOffsetH;
 
 	// Vertical offset of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float armOffsetV;
+	float armOffsetV;
 
 	// How much grabbed object gets pushed away
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		float dropImpulseMultiplier;
+	float dropImpulseMultiplier;
     
     // How much the character can jump
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
@@ -91,6 +106,9 @@ public:
     // How much the character can jump
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
     float airControl;
+
+	UFUNCTION(BlueprintCallable, Category = Gameplay)
+	void playFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
     
 protected:
 

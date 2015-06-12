@@ -392,3 +392,18 @@ void ADCharacter::enableFiring()
 {
 	canShoot = true;
 }
+
+void ADCharacter::playFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material)
+{
+	USoundCue* sound;
+
+	EPhysicalSurface surfaceType = material->SurfaceType;
+
+	if (surfaceType == SurfaceType2) sound = glassSound;
+	else if (surfaceType == SurfaceType3) sound = waterSound;
+	else if (surfaceType == SurfaceType4) sound = grassSound;
+	else if (surfaceType == SurfaceType5) sound = woodSound;
+	else sound = concreteSound; // Default sound -- Concrete surface
+
+	if (sound) PlaySoundAtLocation(sound, location);
+}

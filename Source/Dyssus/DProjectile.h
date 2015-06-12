@@ -8,8 +8,8 @@ class ADProjectile : public AActor
 {
 	GENERATED_BODY()
 
-		/** Sphere collision component */
-		UPROPERTY(VisibleDefaultsOnly, Category = Projectile) 
+	/** Sphere collision component */
+	UPROPERTY(VisibleDefaultsOnly, Category = Projectile) 
 	class USphereComponent* CollisionComp;
 
 	/** Projectile movement component */
