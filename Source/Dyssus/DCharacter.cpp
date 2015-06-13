@@ -211,10 +211,12 @@ void ADCharacter::GrabObject(FHitResult* hitData)
 
 void ADCharacter::DropObject()
 {
+	// Drop grabbable
 	physicsHandle->ReleaseComponent();
 	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Block);
 
+	// According to specification, dropped objects should be pushed slightly forward
 	FVector forceVector = GetControlRotation().Vector() * dropImpulseMultiplier;
 	grabbedObject->AddForce(forceVector);
 
