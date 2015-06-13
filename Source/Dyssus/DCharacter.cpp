@@ -224,13 +224,17 @@ void ADCharacter::DropObject()
 void ADCharacter::Run()
 {
 	// Smooth interpolation to faster run speed
-	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, sprintSpeed, GetWorld()->GetDeltaSeconds(), runWalkInterpSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+															sprintSpeed, GetWorld()->GetDeltaSeconds(), 
+															runWalkInterpSpeed);
 }
 
 void ADCharacter::StopRunning()
 {
 	// Smooth interpolation to slower walk speed
-	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, walkSpeed, GetWorld()->GetDeltaSeconds(), runWalkInterpSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
+															walkSpeed, GetWorld()->GetDeltaSeconds(), 
+															runWalkInterpSpeed);
 }
 
 void ADCharacter::OnFire()
