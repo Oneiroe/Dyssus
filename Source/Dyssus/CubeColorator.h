@@ -6,6 +6,20 @@
 #include "Cube.h"
 #include "CubeColorator.generated.h"
 
+UENUM()
+enum inputHandlingBehaviour{
+		LOGIC_AND                UMETA(DisplayName = "AND"),
+		LOGIC_OR                    UMETA(DisplayName = "OR"),
+		CUSTOM_LOGIC                    UMETA(DisplayName = "Custom")
+};
+
+UENUM()
+enum inputCorrespondingAction{
+	CHANGE_COLOR	UMETA(DisplayName = "Change Color"),
+	SWITCH_ON		UMETA(DisplayName = "Switch ON"),
+	SWITCH_OFF		UMETA(DisplayName = "Switch OFF")
+};
+
 USTRUCT()
 struct FInput
 {
@@ -15,10 +29,24 @@ struct FInput
 	UPROPERTY(EditAnywhere)
 	TArray<bool> buttonsStatus;
 
+	//how to combine the inputs received
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<inputHandlingBehaviour> handlingBehaviour;
+
+	//how to combine the inputs received
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<inputCorrespondingAction> actionToPerform;
+
 	//if the input is active or not
 	UPROPERTY(EditAnywhere)
 	UMaterial* color;
+
+	//if the input is active or not
+	UPROPERTY(EditAnywhere)
+	bool switcher;
 };
+
+
 
 UCLASS()
 class DYSSUS_API ACubeColorator : public AActor

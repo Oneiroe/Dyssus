@@ -29,8 +29,44 @@ void ACubeColorator::OnConstruction(const FTransform& Transform)
 	for (int i = 0; i < inputToHandle.Num(); i++)
 	{
 		inputToHandle[i].buttonsStatus.SetNum(inputNumbers, true);
-	}
 
+		switch (inputToHandle[i].actionToPerform.GetValue())
+		{
+		case(CHANGE_COLOR) :
+			UE_LOG(LogTemp, Warning, TEXT("ACubeColorator->OnConstruction()->CHANGE_COLOR selected"));
+			
+			//if the input is active or not
+			UPROPERTY(EditAnywhere)
+			inputToHandle[i].color;
+			
+			UPROPERTY(VisibleAnywhere)
+			inputToHandle[i].switcher;
+			break;
+		case(SWITCH_ON) :
+			UE_LOG(LogTemp, Warning, TEXT("ACubeColorator->OnConstruction()->SWITCH_ON selected"));
+
+			//if the input is active or not
+			UPROPERTY(VisibleAnywhere)
+			inputToHandle[i].color;
+
+			UPROPERTY(EditAnywhere)
+			inputToHandle[i].switcher=true;
+			break;
+			
+		case(SWITCH_OFF) :
+						UE_LOG(LogTemp, Warning, TEXT("ACubeColorator->OnConstruction()->SWITCH_OFF selected"));
+
+			//if the input is active or not
+			UPROPERTY(VisibleAnywhere)
+				inputToHandle[i].color;
+
+			UPROPERTY(EditAnywhere)
+				inputToHandle[i].switcher=false;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 // Called when the game starts or when spawned
