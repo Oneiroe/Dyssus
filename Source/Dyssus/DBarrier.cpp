@@ -40,6 +40,3 @@ void ADBarrier::OnActorBeginOverlap(class AActor* OtherActor,
 {
 	//TODO Handle different situations according to the design
 }
-
-
-

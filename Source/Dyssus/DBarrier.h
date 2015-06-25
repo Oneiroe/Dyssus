@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "DStaticLibrary.h"
 #include "DBarrier.generated.h"
 
 UCLASS()
