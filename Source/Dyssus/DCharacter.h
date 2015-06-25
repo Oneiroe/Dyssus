@@ -108,7 +108,7 @@ public:
     float airControl;
 
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
-	void playFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
+	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
     
 protected:
 
@@ -123,7 +123,7 @@ protected:
 	bool canShoot;
 
 	/** Sets canShoot to true. It is called when gun cooldown expires */
-	void enableFiring();
+	void EnableFiring();
 
 	/** Handle object interaction */
     bool CanGrab(AActor* hitActor);

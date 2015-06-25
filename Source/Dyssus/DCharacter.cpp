@@ -255,7 +255,7 @@ void ADCharacter::OnFire()
 
 	// Start timer for gun cooldown
 	canShoot = false;
-	GetWorldTimerManager().SetTimer(this, &ADCharacter::enableFiring, gunTimeout);
+	GetWorldTimerManager().SetTimer(this, &ADCharacter::EnableFiring, gunTimeout);
 	
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -394,12 +394,12 @@ bool ADCharacter::EnableTouchscreenMovement(class UInputComponent* InputComponen
 	return bResult;
 }
 
-void ADCharacter::enableFiring()
+void ADCharacter::EnableFiring()
 {
 	canShoot = true;
 }
 
-void ADCharacter::playFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material)
+void ADCharacter::PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material)
 {
 	USoundCue* sound;
 
