@@ -29,7 +29,7 @@ public:
 	class UBoxComponent* BoxComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gameplay)
-	TEnumAsByte<DTypes::DCOLOR> barrierColor;
+	TEnumAsByte<DTypes::DCOLOR> BarrierColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* OverlapSound;
@@ -60,5 +60,13 @@ public:
 		int32 OtherBodyIndex, 
 		bool bFromSweep, 
 		const FHitResult &SweepResult
+	);
+
+	UFUNCTION(BlueprintCallable, Category = Gameplay)
+	void OnEndOverlap
+	(
+		class AActor * OtherActor,
+		class UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
 	);
 };
