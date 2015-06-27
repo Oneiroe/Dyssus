@@ -6,7 +6,6 @@
 
 #define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White,text)
 
-// Sets default values
 ACube::ACube()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->constructor"));
@@ -31,7 +30,12 @@ ACube::ACube()
 	//RootComponent = CubeMesh;
 	CubeMesh->SetSimulatePhysics(true);
 
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	BoxComponent->bGenerateOverlapEvents = true;
+
 	SetRootComponent(CubeMesh);
+
+	BoxComponent->AttachParent = CubeMesh;
 }
 
 void ACube::OnConstruction(const FTransform& Transform)
@@ -46,7 +50,7 @@ void ACube::OnConstruction(const FTransform& Transform)
 	{
 		Components[0]->SetStaticMesh(permanentColorCubeMesh);
 	}
-	Components[0]->SetMaterial(0, defaultColor);
+	Components[0]->SetMaterial(0, defaultMaterial);
 }
 
 void ACube::PostEditMove(bool bFinished)
@@ -70,29 +74,32 @@ void ACube::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 }
 
-UMaterial* ACube::getDefaultColor()
+TEnumAsByte<DTypes::DCOLOR> ACube::getDefaultColor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->getDefaultColor()"));
 	return defaultColor;
 }
 
-void ACube::setDefaultColor(UMaterial* newDefaultColor)
+void ACube::setDefaultColor(UMaterial* newDefaultMaterial, DTypes::DCOLOR color)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->setDefaultColor()"));
-	defaultColor = newDefaultColor;
+	defaultMaterial = newDefaultMaterial;
+	defaultColor = color;
 }
 
-UMaterial* ACube::getCurrentColor()
+TEnumAsByte<DTypes::DCOLOR> ACube::getCurrentColor()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->getCurrentColor()"));
 	//return this->GetDestructibleComponent()->GetMaterial(0)->GetMaterial();
-	TArray<UStaticMeshComponent*> Components;
+	/*TArray<UStaticMeshComponent*> Components;
 	this->GetComponents<UStaticMeshComponent>(Components);
 	if (Components.Num() < 1) return defaultColor;
-	return Components[0]->GetMaterial(0)->GetMaterial();
+	return Components[0]->GetMaterial(0)->GetMaterial();*/
+
+	return currentColor;
 }
 
-void ACube::setCurrentColor(UMaterial* newCurrentColor)
+void ACube::setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR color)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->setCurrentColor()"));
 	if (canChangeColor == false) return;
@@ -100,8 +107,11 @@ void ACube::setCurrentColor(UMaterial* newCurrentColor)
 	//this->GetDestructibleComponent()->SetMaterial(0, newCurrentColor);
 	TArray<UStaticMeshComponent*> Components;
 	this->GetComponents<UStaticMeshComponent>(Components);
-	if (Components.Num() < 1) return;
-	Components[0]->SetMaterial(0, newCurrentColor);
+	if (Components.Num() > 0)
+		Components[0]->SetMaterial(0, newCurrentMaterial);
+	currentMaterial = newCurrentMaterial;
+
+	currentColor = color;
 }
 
 bool ACube::getCanChangeColor()
@@ -245,7 +255,7 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		{
 			defaultColor = getCurrentColor();
 		}
-		UMaterial* currentColor = getCurrentColor();
+
 		Components[0]->DestroyComponent();
 
 		UDestructibleComponent* cubeDestroyableMesh = NewObject<UDestructibleComponent>(this);
@@ -259,8 +269,8 @@ void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 			cubeDestroyableMesh->SetDestructibleMesh(destroyablePermanentColorCubeMesh);
 		}
 		cubeDestroyableMesh->SetSimulatePhysics(true);
-		cubeDestroyableMesh->SetMaterial(0, currentColor);
-		cubeDestroyableMesh->SetMaterial(1, currentColor);
+		cubeDestroyableMesh->SetMaterial(0, currentMaterial);
+		cubeDestroyableMesh->SetMaterial(1, currentMaterial);
 		cubeDestroyableMesh->RegisterComponent();
 		SetRootComponent(cubeDestroyableMesh);
 		RootComponent->SetVisibility(true);
@@ -312,9 +322,9 @@ void ACube::respawnCube()
 	//	Components[0]->SetMaterial(0, defaultColor);
 	//}
 	
-	Components[0]->SetMaterial(0, defaultColor);
+	Components[0]->SetMaterial(0, defaultMaterial);
 
-	respawnedCube->setDefaultColor(defaultColor);
+	respawnedCube->setDefaultColor(defaultMaterial, DTypes::DCOLOR::WHITE);
 
 	respawnedCube->setStartingLocation(location);
 	respawnedCube->setRespawnLocation(respawnLocation);

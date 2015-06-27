@@ -2,9 +2,8 @@
 
 #include "GrabbableInterface.h"
 #include "GameFramework/Character.h"
+#include "DStaticLibrary.h"
 #include "DCharacter.generated.h"
-
-class UInputComponent;
 
 UCLASS(config = Game)
 class ADCharacter : public ACharacter  
@@ -110,14 +109,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
     
+	/** Reference to the object grabbed by the player */
+	UPrimitiveComponent* grabbedObject;
+
+	/** Force character to drop object */
+	void DropObject();
+
+	/** Color of the held cube, if any */
+	DTypes::DCOLOR cubeColor;
+
 protected:
 
 	/** Neat way for handling object dragging */
 	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
 	UPhysicsHandleComponent* physicsHandle;
-
-	/** Reference to the object grabbed by the player */
-	UPrimitiveComponent* grabbedObject;
 
 	/** Whether player can shoot a projectile */
 	bool canShoot;
@@ -129,7 +134,6 @@ protected:
     bool CanGrab(AActor* hitActor);
 	void GrabDropObject();
 	void GrabObject(FHitResult* hitData);
-	void DropObject();
 	void CarryObject();
 
 	/** Fires a projectile. */

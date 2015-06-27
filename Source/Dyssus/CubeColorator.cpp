@@ -133,7 +133,7 @@ void ACubeColorator::ReceiveActorBeginOverlap(AActor * OtherActor)
 		ACube* cubeCollided = Cast<ACube>(OtherActor);
 		if (cubeCollided == NULL) return;
 		UE_LOG(LogTemp, Warning, TEXT("ACubeColorator->BeginOverlap->collidedACube"));
-		cubeCollided->setCurrentColor(coloratorColor);
+		cubeCollided->setCurrentColor(coloratorColor, DTypes::DCOLOR::WHITE);
 		if (soundUsed != NULL)
 		{
 			UGameplayStatics::PlaySoundAtLocation(this, soundUsed, GetActorLocation());

@@ -6,8 +6,9 @@
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
 //#include "Engine/DestructibleMesh.h"
-//this MUST be le last include!
+#include "DStaticLibrary.h"
 #include "Cube.generated.h"
+
 UCLASS(Blueprintable)
 class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IGrabbableInterface
 { //public ADestructibleActor
@@ -15,10 +16,19 @@ class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IG
 
 private:
 	//FString pathChangeColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cylinder.Shape_Cylinder");
-	
+
 	// material that define the inizial and default color of a cube
 	UPROPERTY(EditAnywhere)
-	UMaterial* defaultColor;
+	UMaterial* defaultMaterial;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<DTypes::DCOLOR> defaultColor;
+
+	UPROPERTY(EditAnywhere)
+	UMaterial* currentMaterial;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<DTypes::DCOLOR> currentColor;
 
 	// material that define the current color of a cube
 	//UMaterial* current_color;
@@ -59,7 +69,10 @@ private:
 	// respawns the cube with the property set on construction
 	void respawnCube();
 
-public:	
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class UBoxComponent* BoxComponent;
 
 	// mesh of a normal cube that can change color
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -100,19 +113,19 @@ public:
 	
 	// Returns the default/initial color of the cube
 	UFUNCTION(BlueprintCallable,category="Cube")
-	UMaterial* getDefaultColor();
+	TEnumAsByte<DTypes::DCOLOR> getDefaultColor();
 
 	// Edit the default coloro of the cube
 	UFUNCTION(BlueprintCallable,category="Cube")
-	void setDefaultColor(UMaterial* newDefaultColor);
+	void setDefaultColor(UMaterial* newDefaultMaterial, DTypes::DCOLOR dColor);
 	
 	// Returns the current color of the cube
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	UMaterial* getCurrentColor();
+	TEnumAsByte<DTypes::DCOLOR> getCurrentColor();
 
 	// Edit the current color of the cube
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	void setCurrentColor(UMaterial* newCurrentColor);
+	void setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR cColor);
 
 	// retruns if the cube can change color or is a permanent one
 	UFUNCTION(BlueprintCallable,category="Cube")

@@ -4,6 +4,7 @@
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
 #include "DStaticLibrary.h"
+#include "Cube.h"
 
 ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -31,9 +32,6 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->RelativeLocation = FVector(0.f, 0.f, -150.f);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
-
-	// ProjectileClass must be properly set in Blueprint
-	// ProjectileClass = ADProjectile::StaticClass();
 
 	// Player can shoot by default when game starts
 	canShoot = true;
@@ -65,6 +63,8 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	physicsHandle->AngularDamping = 10000.f;
 	physicsHandle->AngularStiffness = 5000.f;
 	physicsHandle->InterpolationSpeed = 5000.f;
+
+	cubeColor = DTypes::DCOLOR::NONE;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -203,22 +203,28 @@ void ADCharacter::GrabObject(FHitResult* hitData)
 	grabbedObject = hitData->GetComponent();
 	grabbedObject->SetWorldRotation(GetControlRotation());
 
+	AActor* hitActor = hitData->GetActor();
+
+	if (hitActor->IsA(ACube::StaticClass())) 
+	{
+		UDStaticLibrary::Print("It's a cube!");
+		cubeColor = Cast<ACube>(hitActor)->getCurrentColor();
+	}
+
 	// Attach grabbable to character
 	physicsHandle->GrabComponent(grabbedObject, hitData->BoneName, hitData->Location, true);
-	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Overlap);
-	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 }
 
 void ADCharacter::DropObject()
 {
 	// Drop grabbable
 	physicsHandle->ReleaseComponent();
-	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
-	// grabbedObject->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Block);
 
 	// According to specification, dropped objects should be pushed slightly forward
 	FVector forceVector = GetControlRotation().Vector() * dropImpulseMultiplier;
 	grabbedObject->AddForce(forceVector);
+	
+	cubeColor = DTypes::DCOLOR::NONE;
 
 	interactState = ObjectInteractionState::NONE;
 }

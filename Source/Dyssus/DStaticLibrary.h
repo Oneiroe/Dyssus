@@ -28,3 +28,20 @@ public:
     // of the screen. The default color fo the text is white
     static void Print(FString Message, FColor TextColor = FColor::White);
 };
+
+UENUM(BlueprintType, Category = "Gameplay")
+namespace DTypes
+{
+	enum DCOLOR
+	{
+		NONE			UMETA(DisplayName = "None"),
+		WHITE			UMETA(DisplayName = "White"),
+		BLACK			UMETA(DisplayName = "Black"),
+		YELLOW			UMETA(DisplayName = "Yellow"),
+		GREEN			UMETA(DisplayName = "Green"),
+		RED				UMETA(DisplayName = "Red"),
+		BLUE			UMETA(DisplayName = "Blue"),
+		PURPLE			UMETA(DisplayName = "Purple")
+	};
+
+}

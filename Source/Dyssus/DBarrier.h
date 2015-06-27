@@ -3,20 +3,16 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "DStaticLibrary.h"
 #include "DBarrier.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class DYSSUS_API ADBarrier : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
+public:
 	ADBarrier();
-
-	// ADBarrier(const FObjectInitializer& ObjectInitializer);
-
-	virtual void OnConstruction(const FTransform& Transform) override;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,41 +20,40 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UStaticMeshComponent* mesh;
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UBoxComponent* collider;
+	class UStaticMeshComponent* StaticMeshComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float width;
+	class UBoxComponent* BoxComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gameplay)
+	TEnumAsByte<DTypes::DCOLOR> barrierColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float height;
+	class USoundBase* OverlapSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class USoundBase* overlapSound;
+	class USoundBase* OverlapDropObjSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class USoundBase* overlapDropObjSound;
+	class USoundBase* ChangeColorSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class USoundBase* changeColorSound;
+	class USoundBase* ActivatedSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class USoundBase* activatedSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class USoundBase* deactivatedSound;
+	class USoundBase* DeactivatedSound;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	bool isCrossable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UMaterial* material;
+	bool IsCrossable;
 
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
-	void OnActorBeginOverlap
+	void SetCrossable(bool newCrossable);
+
+	UFUNCTION(BlueprintCallable, Category = Gameplay)
+	void OnBeginOverlap
 	(
 		class AActor* OtherActor, 
 		class UPrimitiveComponent* OtherComp, 
