@@ -27,8 +27,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UBoxComponent* BoxComponent;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+    UMaterial* currentMaterial;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+    bool canChangeColor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TEnumAsByte<DTypes::DCOLOR> BarrierColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -69,4 +75,8 @@ public:
 		class UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex
 	);
+    
+    // Edit the current color of the barrier
+    UFUNCTION(BlueprintCallable, category = "Barrier")
+    void setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR cColor);
 };

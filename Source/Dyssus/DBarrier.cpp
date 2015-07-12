@@ -105,3 +105,18 @@ void ADBarrier::SetCrossable(bool newCrossable)
 
 	IsCrossable = newCrossable;
 }
+
+void ADBarrier::setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR color)
+{
+    UE_LOG(LogTemp, Warning, TEXT("ADBarrier->setCurrentColor()"));
+    if (canChangeColor == false) return;
+    //print("ACube->setCurrentColor()");
+    //this->GetDestructibleComponent()->SetMaterial(0, newCurrentColor);
+    TArray<UStaticMeshComponent*> Components;
+    this->GetComponents<UStaticMeshComponent>(Components);
+    if (Components.Num() > 0)
+        Components[0]->SetMaterial(0, newCurrentMaterial);
+    currentMaterial = newCurrentMaterial;
+    
+    BarrierColor = color;
+}
