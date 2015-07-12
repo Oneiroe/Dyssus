@@ -4,8 +4,6 @@
 #include "Cube.h"
 #include "UnrealString.h"
 
-#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White,text)
-
 ACube::ACube()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->constructor"));

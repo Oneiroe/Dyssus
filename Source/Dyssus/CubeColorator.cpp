@@ -3,8 +3,6 @@
 #include "Dyssus.h"
 #include "CubeColorator.h"
 
-#define print(text) if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.5, FColor::White,text)
-
 // Sets default values
 ACubeColorator::ACubeColorator()
 {
