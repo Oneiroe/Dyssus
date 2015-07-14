@@ -5,17 +5,20 @@
 #include "GameFramework/Actor.h"
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
+#include "Colorable.h"
 //#include "Engine/DestructibleMesh.h"
 #include "DStaticLibrary.h"
 #include "Cube.generated.h"
 
 UCLASS(Blueprintable)
-class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IGrabbableInterface
+class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IGrabbableInterface, public IColorable
 { //public ADestructibleActor
 	GENERATED_BODY()
 
 private:
 	//FString pathChangeColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cylinder.Shape_Cylinder");
+
+	UStaticMeshComponent* CubeMesh;
 
 	// material that define the inizial and default color of a cube
 	UPROPERTY(EditAnywhere)
@@ -70,6 +73,8 @@ private:
 	void respawnCube();
 
 public:
+
+	DTypes::DCOLOR DColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UBoxComponent* BoxComponent;

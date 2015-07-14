@@ -4,6 +4,7 @@
 #include "DBarrier.h"
 #include "DCharacter.h"
 #include "Cube.h"
+#include "ColorableFactory.h"
 #include "DStaticLibrary.h"
 
 
@@ -51,6 +52,13 @@ void ADBarrier::Tick( float DeltaTime )
 void ADBarrier::OnConstruction(const FTransform& Transform)
 {
 	SetCrossable(IsCrossable);
+
+	UColorableFactory* cf = new UColorableFactory();
+
+	cf->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, DColor);
+	StaticMeshComponent->SetMaterial(0, currentMaterial);
+
+	delete cf;
 }
 
 void ADBarrier::OnBeginOverlap(class AActor* OtherActor,

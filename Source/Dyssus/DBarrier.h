@@ -4,15 +4,18 @@
 
 #include "GameFramework/Actor.h"
 #include "DStaticLibrary.h"
+#include "Colorable.h"
 #include "DBarrier.generated.h"
 
 UCLASS(Blueprintable)
-class DYSSUS_API ADBarrier : public AActor
+class DYSSUS_API ADBarrier : public AActor, public IColorable
 {
 	GENERATED_BODY()
 	
 public:
 	ADBarrier();
+
+	DTypes::DCOLOR DColor;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
