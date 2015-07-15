@@ -11,17 +11,25 @@ class DYSSUS_API ADButton : public AActor
 	GENERATED_BODY()
 
 private:
+	int numOverlappingActors;
+
+	void PressButton(float DeltaTime);
+
+	void ReleaseButton(float DeltaTime);
+
+	float initialZ;
+
 	// This indicates whether the button is currently pressed (true) or released (false)
 	UPROPERTY(EditAnywhere, Category = State)
 		bool isPressed;
 
 	// Sound played when the button is released
 	UPROPERTY(EditAnywhere, Category = Sounds)
-		USoundBase* onReleaseSound;
+		USoundCue* onReleaseSound;
 
 	// Sound played when the button is pressed
 	UPROPERTY(EditAnywhere, Category = Sounds)
-		USoundBase* onPressSound;
+		USoundCue* onPressSound;
 
 public:
 	// Sets default values for this actor's properties
@@ -34,6 +42,12 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float deltaHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		float interpSpeed;
 
 	// Returns whether the button is currently pressed (true) or released (false)
 	UFUNCTION(BlueprintCallable, Category = State)
@@ -50,17 +64,17 @@ public:
 
 	// Setters and getters for release sound
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		USoundBase* GetOnReleaseSound();
+		USoundCue* GetOnReleaseSound();
 
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		void SetOnReleaseSound(USoundBase* releaseSound);
+		void SetOnReleaseSound(USoundCue* releaseSound);
 
 	// Setters and getters for press sound
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		USoundBase* GetOnPressSound();
+		USoundCue* GetOnPressSound();
 
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		void SetOnPressSound(USoundBase* pressSound);
+		void SetOnPressSound(USoundCue* pressSound);
 
 	// Functions for collisions
 	UFUNCTION(BlueprintCallable, Category = Collision)

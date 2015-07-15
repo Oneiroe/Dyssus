@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Dyssus.h"
+#include "DCharacter.h"
 #include "DButton.h"
 
 
@@ -24,23 +25,34 @@ ADButton::ADButton()
 
 	// The button is not pressed by default
 	SetPressed(false);
+
+	numOverlappingActors = 0;
+	deltaHeight = 20;
+	interpSpeed = 100;
 }
 
 // Called when the game starts or when spawned
 void ADButton::BeginPlay()
 {
 	Super::BeginPlay();
+
+	initialZ = GetActorLocation().Z;
 }
 
 // Called every frame
 void ADButton::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (isPressed) PressButton(DeltaTime);
+	else ReleaseButton(DeltaTime);
 }
 
 void ADButton::OnConstruction(const FTransform& Transform)
 {
 	SetPressed(isPressed);
+
+	initialZ = GetActorLocation().Z;
 }
 
 void ADButton::OnBeginOverlap(class AActor* OtherActor,
@@ -49,21 +61,37 @@ class UPrimitiveComponent* OtherComp,
 	bool bFromSweep,
 	const FHitResult& SweepResult)
 {
-	// TODO:
-	// If OtherActor is a DCharacter or a DCube, the button changes state to pressed (isPressed = true)
-	// Play OnPressSound
+	if (OtherActor->IsA(ADCharacter::StaticClass()) || OtherActor->Implements<UGrabbableInterface>())
+	{
+		numOverlappingActors++;
+
+		if (!isPressed)
+		{
+			SetPressed(true);
+
+			if (onPressSound) PlaySoundAtLocation(onPressSound, GetActorLocation());
+		}
+	}
 }
 
 void ADButton::OnEndOverlap(class AActor * OtherActor,
 class UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex)
 {
-	// TODO:
-	// Change the state to released (isPressed = false)
-	// Play OnReleaseSound
+	if (OtherActor->IsA(ADCharacter::StaticClass()) || OtherActor->Implements<UGrabbableInterface>())
+	{
+		numOverlappingActors--;
 
-	// Needed for generating overlapping events
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+		if (!numOverlappingActors)
+		{
+			SetPressed(false);
+
+			if (onReleaseSound) PlaySoundAtLocation(onReleaseSound, GetActorLocation());
+
+			// Needed for generating overlapping events
+			SphereComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+		}
+	}
 }
 
 void ADButton::SetPressed(bool newPressed)
@@ -76,22 +104,40 @@ bool ADButton::IsButtonPressed()
 	return isPressed;
 }
 
-USoundBase* ADButton::GetOnReleaseSound()
+USoundCue* ADButton::GetOnReleaseSound()
 {
 	return onReleaseSound;
 }
 
-void ADButton::SetOnReleaseSound(USoundBase* newReleaseSound)
+void ADButton::SetOnReleaseSound(USoundCue* newReleaseSound)
 {
 	onReleaseSound = newReleaseSound;
 }
 
-USoundBase* ADButton::GetOnPressSound()
+USoundCue* ADButton::GetOnPressSound()
 {
 	return onPressSound;
 }
 
-void ADButton::SetOnPressSound(USoundBase* newPressSound)
+void ADButton::SetOnPressSound(USoundCue* newPressSound)
 {
 	onPressSound = newPressSound;
+}
+
+void ADButton::PressButton(float DeltaTime)
+{
+	float z = FMath::FInterpTo(GetActorLocation().Z, initialZ - deltaHeight, DeltaTime, interpSpeed);
+	FVector loc = GetActorLocation();
+	loc.Z = z;
+
+	SetActorLocation(loc);
+}
+
+void ADButton::ReleaseButton(float DeltaTime)
+{
+	float z = FMath::FInterpTo(GetActorLocation().Z, initialZ, DeltaTime, interpSpeed);
+	FVector loc = GetActorLocation();
+	loc.Z = z;
+
+	SetActorLocation(loc);
 }
