@@ -5,12 +5,15 @@
 #include "GameFramework/Actor.h"
 #include "DStaticLibrary.h"
 #include "Colorable.h"
+#include "ColorableFactory.h"
 #include "DBarrier.generated.h"
 
 UCLASS(Blueprintable)
 class DYSSUS_API ADBarrier : public AActor, public IColorable
 {
 	GENERATED_BODY()
+
+	UColorableFactory* ColorableFactory;
 	
 public:
 	ADBarrier();

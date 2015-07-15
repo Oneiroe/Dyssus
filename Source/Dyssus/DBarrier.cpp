@@ -4,7 +4,6 @@
 #include "DBarrier.h"
 #include "DCharacter.h"
 #include "Cube.h"
-#include "ColorableFactory.h"
 #include "DStaticLibrary.h"
 
 
@@ -33,6 +32,8 @@ ADBarrier::ADBarrier()
 
 	// White is the default color for barriers
 	BarrierColor = DTypes::DCOLOR::WHITE;
+
+	ColorableFactory = CreateDefaultSubobject<UColorableFactory>(TEXT("ColorableFactory"));
 }
 
 // Called when the game starts or when spawned
@@ -53,12 +54,8 @@ void ADBarrier::OnConstruction(const FTransform& Transform)
 {
 	SetCrossable(IsCrossable);
 
-	UColorableFactory* cf = new UColorableFactory();
-
-	cf->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, DColor);
+	ColorableFactory->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, DColor);
 	StaticMeshComponent->SetMaterial(0, currentMaterial);
-
-	delete cf;
 }
 
 void ADBarrier::OnBeginOverlap(class AActor* OtherActor,

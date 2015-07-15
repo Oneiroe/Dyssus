@@ -2,6 +2,7 @@
 
 #include "Dyssus.h"
 #include "ColorableFactory.h"
+#include "Colorable.h"
 #include "Cube.h"
 #include "DBarrier.h"
 
@@ -76,14 +77,16 @@ void UColorableFactory::GetMaterialFromColorAndClass(UClass* targetClass, UMater
 
 bool UColorableFactory::CompareColors(AActor* a, AActor* b)
 {
+	if (!a->Implements<UColorable>() || !b->Implements<UColorable>()) return false;
+
 	UMaterial* matA = (UMaterial*)(Cast<UStaticMeshComponent>(a->GetComponentByClass(UStaticMeshComponent::StaticClass())))->GetMaterial(0);
 	UMaterial* matB = (UMaterial*)(Cast<UStaticMeshComponent>(b->GetComponentByClass(UStaticMeshComponent::StaticClass())))->GetMaterial(0);
 
-	UMaterial* _matA = CreateDefaultSubobject<UMaterial>("");
-	UMaterial* _matB = CreateDefaultSubobject<UMaterial>("");
+	UMaterial* _matA = NULL;
+	UMaterial* _matB = NULL;
 
-	GetMaterialFromColorAndClass(a->GetActorClass(), _matA, DTypes::DCOLOR::WHITE);
-	GetMaterialFromColorAndClass(b->GetActorClass(), _matB, DTypes::DCOLOR::WHITE);
+	GetMaterialFromColorAndClass(a->GetActorClass(), _matA, Cast<UColorable>(a)->DColor);
+	GetMaterialFromColorAndClass(b->GetActorClass(), _matB, Cast<UColorable>(b)->DColor);
 
 	return matA->GetName() ==  _matA->GetName() && matB->GetName() == _matB->GetName();
 }

@@ -19,4 +19,8 @@ class IColorable
 {
 	GENERATED_IINTERFACE_BODY()
 
+public:
+
+	DTypes::DCOLOR DColor;
+
 };

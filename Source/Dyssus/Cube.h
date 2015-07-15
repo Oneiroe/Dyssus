@@ -6,6 +6,7 @@
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
 #include "Colorable.h"
+#include "ColorableFactory.h"
 //#include "Engine/DestructibleMesh.h"
 #include "DStaticLibrary.h"
 #include "Cube.generated.h"
@@ -16,6 +17,9 @@ class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IG
 	GENERATED_BODY()
 
 private:
+
+	UColorableFactory* ColorableFactory;
+
 	//FString pathChangeColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cylinder.Shape_Cylinder");
 
 	UStaticMeshComponent* CubeMesh;

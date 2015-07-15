@@ -11,16 +11,16 @@ ADButton::ADButton()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// The button has a box collider, which represents the volume for the overlap to press the button
-	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &ADButton::OnBeginOverlap);
-	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &ADButton::OnEndOverlap);
-	BoxComponent->bGenerateOverlapEvents = true;
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADButton::OnBeginOverlap);
+	SphereComponent->OnComponentEndOverlap.AddDynamic(this, &ADButton::OnEndOverlap);
+	SphereComponent->bGenerateOverlapEvents = true;
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	SetActorEnableCollision(true);
 
 	RootComponent = StaticMeshComponent;
-	BoxComponent->AttachParent = StaticMeshComponent;
+	SphereComponent->AttachParent = StaticMeshComponent;
 
 	// The button is not pressed by default
 	SetPressed(false);
@@ -63,7 +63,7 @@ class UPrimitiveComponent* OtherComp,
 	// Play OnReleaseSound
 
 	// Needed for generating overlapping events
-	BoxComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 }
 
 void ADButton::SetPressed(bool newPressed)

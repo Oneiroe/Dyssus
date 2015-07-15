@@ -43,7 +43,7 @@ public:
 		void SetPressed(bool newPressed);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UBoxComponent* BoxComponent;
+	class USphereComponent* SphereComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UStaticMeshComponent* StaticMeshComponent;

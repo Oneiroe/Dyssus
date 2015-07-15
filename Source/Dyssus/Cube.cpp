@@ -2,7 +2,6 @@
 
 #include "Dyssus.h"
 #include "Cube.h"
-#include "ColorableFactory.h"
 #include "UnrealString.h"
 
 ACube::ACube()
@@ -35,6 +34,8 @@ ACube::ACube()
 	SetRootComponent(CubeMesh);
 
 	BoxComponent->AttachParent = CubeMesh;
+
+	ColorableFactory = CreateDefaultSubobject<UColorableFactory>(TEXT("ColorableFactory"));
 }
 
 void ACube::OnConstruction(const FTransform& Transform)
@@ -51,12 +52,8 @@ void ACube::OnConstruction(const FTransform& Transform)
 	}
 	Components[0]->SetMaterial(0, defaultMaterial);
 
-	UColorableFactory* cf = new UColorableFactory();
-
-	cf->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, DColor);
+	ColorableFactory->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, DColor);
 	CubeMesh->SetMaterial(0, currentMaterial);
-
-	delete cf;
 }
 
 void ACube::PostEditMove(bool bFinished)
