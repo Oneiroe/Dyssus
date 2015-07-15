@@ -340,3 +340,14 @@ void ACube::respawnCube()
 	respawnedCube->destroyableChangableColorCubeMesh = destroyableChangableColorCubeMesh;
 	respawnedCube->destroyablePermanentColorCubeMesh = destroyablePermanentColorCubeMesh;
 }
+
+void ACube::SetColor(DTypes::DCOLOR dColor)
+{
+	DColor = dColor;
+	ColorableFactory->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, dColor);
+}
+
+DTypes::DCOLOR ACube::GetColor()
+{
+	return DColor;
+}

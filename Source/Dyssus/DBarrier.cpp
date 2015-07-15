@@ -5,6 +5,7 @@
 #include "DCharacter.h"
 #include "Cube.h"
 #include "DStaticLibrary.h"
+#include "ColorableFactory.h"
 
 
 // Sets default values
@@ -82,7 +83,7 @@ void ADBarrier::OnBeginOverlap(class AActor* OtherActor,
 		ACube* cube = Cast<ACube>(OtherActor);
 
 		// Setting collision to 'Collision Enabled' stops cube but not character
-		if (BarrierColor == cube->getCurrentColor())
+		if (ColorableFactory->CompareColors(this, cube))
 			BoxComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 		else BoxComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	}
@@ -124,4 +125,15 @@ void ADBarrier::setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR co
     currentMaterial = newCurrentMaterial;
     
     BarrierColor = color;
+}
+
+void ADBarrier::SetColor(DTypes::DCOLOR dColor)
+{
+	DColor = dColor;
+	ColorableFactory->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, dColor);
+}
+
+DTypes::DCOLOR ADBarrier::GetColor()
+{
+	return DColor;
 }

@@ -28,6 +28,10 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	virtual DTypes::DCOLOR GetColor() override;
+
+	virtual void SetColor(DTypes::DCOLOR dColor) override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UStaticMeshComponent* StaticMeshComponent;
 

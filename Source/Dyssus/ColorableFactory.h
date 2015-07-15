@@ -15,49 +15,11 @@ class DYSSUS_API UColorableFactory : public UBlueprintFunctionLibrary
 public:
 	GENERATED_BODY()
 
-	// Barrier materials
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* whiteBarrierMaterial;
-   
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* blackBarrierMaterial;
+	TArray<UMaterial*> BarrierMaterials;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* yellowBarrierMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* greenBarrierMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* redBarrierMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* blueBarrierMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* purpleBarrierMaterial;
-
-	// Cube materials
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* whiteCubeMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* blackCubeMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* yellowCubeMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* greenCubeMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* redCubeMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* blueCubeMaterial;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
-	UMaterial* purpleCubeMaterial;
+	TArray<UMaterial*> CubeMaterials;
 
 	UFUNCTION(BlueprintCallable, Category = Colors)
     AActor* Instantiate(UWorld* World,

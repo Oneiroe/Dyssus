@@ -7,3 +7,13 @@ UColorable::UColorable(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
+
+void IColorable::SetColor(DTypes::DCOLOR dColor)
+{
+
+}
+
+DTypes::DCOLOR IColorable::GetColor()
+{
+	return DTypes::DCOLOR::NONE;
+}

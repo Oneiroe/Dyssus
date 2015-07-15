@@ -9,18 +9,13 @@ UINTERFACE(MinimalAPI, Blueprintable)
 class UColorable : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
-
-public:
-
-	DTypes::DCOLOR DColor;
 };
 
 class IColorable
 {
 	GENERATED_IINTERFACE_BODY()
 
-public:
+	virtual DTypes::DCOLOR GetColor();
 
-	DTypes::DCOLOR DColor;
-
+	virtual void SetColor(DTypes::DCOLOR dColor);
 };

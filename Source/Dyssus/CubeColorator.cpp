@@ -15,7 +15,6 @@ ACubeColorator::ACubeColorator()
 	//UStaticMeshComponent* base = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("base"));
 	//base->AttachTo(trigger);
 	//SetRootComponent(trigger);
-	
 }
 
 // let graphical part to blueprint extension
@@ -121,7 +120,7 @@ void ACubeColorator::setActiveStatus(bool newBehaviour)
 	}
 }
 
-void ACubeColorator::ReceiveActorBeginOverlap(AActor * OtherActor)
+void ACubeColorator::NotifyActorBeginOverlap(AActor * OtherActor)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACubeColorator->BeginOverlap"));
 	if (isActive == false) return;

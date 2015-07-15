@@ -104,7 +104,7 @@ public:
 
 	//UFUNCTION(BlueprintImplementableEvent, Meta = (FriendlyName = "ActorBeginOverlap"), Category = "Collision")
 	// Called when this actor overlaps another actor
-	virtual void ReceiveActorBeginOverlap(AActor * OtherActor) override;
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	// To apply editor changes at realtime
 	virtual void OnConstruction(const FTransform& Transform) override;

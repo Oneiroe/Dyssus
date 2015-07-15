@@ -34,14 +34,14 @@ namespace DTypes
 {
 	enum DCOLOR
 	{
-		NONE			UMETA(DisplayName = "None"),
 		WHITE			UMETA(DisplayName = "White"),
 		BLACK			UMETA(DisplayName = "Black"),
 		YELLOW			UMETA(DisplayName = "Yellow"),
 		GREEN			UMETA(DisplayName = "Green"),
 		RED				UMETA(DisplayName = "Red"),
 		BLUE			UMETA(DisplayName = "Blue"),
-		PURPLE			UMETA(DisplayName = "Purple")
+		PURPLE			UMETA(DisplayName = "Purple"),
+		NONE			UMETA(DisplayName = "None") // None is just a trick to get enum size, should always be left as last element
 	};
 
 }
