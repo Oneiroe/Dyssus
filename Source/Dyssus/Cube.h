@@ -6,226 +6,158 @@
 #include "DestroyableInterface.h"
 #include "GrabbableInterface.h"
 #include "Colorable.h"
-#include "ColorableFactory.h"
-//#include "Engine/DestructibleMesh.h"
 #include "DStaticLibrary.h"
 #include "Cube.generated.h"
 
 UCLASS(Blueprintable)
-class DYSSUS_API ACube :  public AActor, public IDestroyableInterface, public IGrabbableInterface, public IColorable
-{ //public ADestructibleActor
+class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGrabbableInterface, public IColorable
+{
 	GENERATED_BODY()
 
 private:
 
-	UColorableFactory* ColorableFactory;
-
-	//FString pathChangeColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cylinder.Shape_Cylinder");
-
-	UStaticMeshComponent* CubeMesh;
-
-	// material that define the inizial and default color of a cube
-	UPROPERTY(EditAnywhere)
-	UMaterial* defaultMaterial;
+	UMaterial* Material;
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<DTypes::DCOLOR> defaultColor;
-
-	UPROPERTY(EditAnywhere)
-	UMaterial* currentMaterial;
-
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<DTypes::DCOLOR> currentColor;
-
-	// material that define the current color of a cube
-	//UMaterial* current_color;
-
-	// define if the cube is a permanent one or not
-	UPROPERTY(EditAnywhere)
-	bool canChangeColor;
-	//bool canChangeColor = true;
+	bool CanChangeColor;
 
 	// Initial location of the cube on level start
 	UPROPERTY(VisibleAnywhere)
-	FVector startingLocation;
+	FVector StartingLocation;
 
-	// location that the cube will reach on respawn
+	// Location that the cube will reach on respawn
 	UPROPERTY(EditAnywhere)
-	FVector respawnLocation;
+	FVector RespawnLocation;
 
-	// define if the cube will be respawned or permanently destroyed
 	UPROPERTY(EditAnywhere)
-	bool respawnable;
-	//bool respawnable=true;
-	
-	// define if the cube will maintain the current color on respawn or turn back tu the default one
-	UPROPERTY(EditAnywhere)
-	bool maintainColorOnRespawn;
-	//bool maintainColorOnRespawn = false;
+	bool Respawnable;
 
-	// define if the cube can be destroyed or not
+	// Default color on respawn?
 	UPROPERTY(EditAnywhere)
-	bool canBeDestroyed;
-	//bool canBeDestroyed = true;
+	bool MaintainColorOnRespawn;
 
-	// define if the cube will be respawned at his starting location or at the respawn one
 	UPROPERTY(EditAnywhere)
-	bool useStartingLocationOnRespawn;
-	//bool useStartingLocationOnRespawn = true;
+	bool CanBeDestroyed;
 
-	// respawns the cube with the property set on construction
-	void respawnCube();
+	// Define if the cube will be respawned at his starting location or at the respawn one
+	UPROPERTY(EditAnywhere)
+	bool UseStartingLocationOnRespawn;
+
+	// Respawns the cube with the property set on construction
+	void RespawnCube();
 
 public:
 
-	DTypes::DCOLOR DColor;
+	class UStaticMeshComponent* StaticMesh;
 
+	class UDestructibleComponent* DestructibleMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rendering)
+	class UStaticMesh* SMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rendering)
+	class UDestructibleMesh* DMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
+	TEnumAsByte<DTypes::DCOLOR> DDefaultColor;
+
+	UFUNCTION(BlueprintCallable, Category = Colors)
+	TEnumAsByte<DTypes::DCOLOR> GetDefaultColor();
+
+	UFUNCTION(BlueprintCallable, Category = Colors)
+	void SetDefaultColor(DTypes::DCOLOR defColor_);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
+	TEnumAsByte<DTypes::DCOLOR> DColor;
+
+	UFUNCTION(BlueprintCallable, Category = Colors)
 	virtual DTypes::DCOLOR GetColor() override;
 
-	virtual void SetColor(DTypes::DCOLOR dColor) override;
+	UFUNCTION(BlueprintCallable, Category = Colors)
+	virtual void SetColor(DTypes::DCOLOR dColor_) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UBoxComponent* BoxComponent;
 
-	// mesh of a normal cube that can change color
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* changableColorCubeMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
+	TArray<UMaterial*> CubeMaterials;
 
-	//FString pathPermanentColorMesh = TEXT("/Game/Dyssus/Meshes/Shape_Cube.Shape_Cube");
-
-	// mesh of a cube that can't change color
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* permanentColorCubeMesh;
-
-	// mesh of an destroyable cube that can change color
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UDestructibleMesh* destroyableChangableColorCubeMesh;
-
-	// mesh of an destroyable cube that can't change color
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UDestructibleMesh* destroyablePermanentColorCubeMesh;
+	UObject* CubeMesh;
 
 	// Sets default values for this actor's properties
 	ACube();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+	virtual void Tick(float DeltaSeconds) override;
 
-
-
-	//Costructors
-	/*
-	Cube(FColor defaultColor, FVector startingLocation);
-	Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool maintainColorOnRespawn, bool change_location_on_respawn);
-	permanent_Cube(FColor defaultColor, FVector startingLocation);
-	permanent_Cube(FColor defaultColor, FVector startingLocation, bool respawnable, bool maintainColorOnRespawn, bool change_location_on_respawn);
-	*/
-	
-	// Returns the default/initial color of the cube
-	UFUNCTION(BlueprintCallable,category="Cube")
-	TEnumAsByte<DTypes::DCOLOR> getDefaultColor();
-
-	// Edit the default coloro of the cube
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setDefaultColor(UMaterial* newDefaultMaterial, DTypes::DCOLOR dColor);
-	
-	// Returns the current color of the cube
+	// Returns if the cube can change color or is a permanent one
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	TEnumAsByte<DTypes::DCOLOR> getCurrentColor();
+	bool GetCanChangeColor();
 
-	// Edit the current color of the cube
+	// Make the cube color changing possible or not
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	void setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR cColor);
+	void SetCanChangeColor(bool changeBehaviour);
 
-	// retruns if the cube can change color or is a permanent one
-	UFUNCTION(BlueprintCallable,category="Cube")
-	bool getCanChangeColor();
+	// Return the starting location of the cube
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	FVector GetStartingLocation();
 
-	// make the cube color changing possible or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setCanChangeColor(bool changeBehaviour);
-	
-	// return the starting location of the cube
-	UFUNCTION(BlueprintCallable,category="Cube")
-	FVector getStartingLocation();
+	// Edit the starting location of the cube
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	void SetStartingLocation(FVector newStartingLocation);//REMOVE-PENDING
 
-	// edit the starting location of the cube
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setStartingLocation(FVector newStartingLocation);//REMOVE-PENDING
+	// Return the respawn location
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	FVector GetRespawnLocation();
 
-	// return the respawn location
-	UFUNCTION(BlueprintCallable,category="Cube")
-	FVector getRespawnLocation();
+	// Edit the respawn location
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	void SetRespawnLocation(FVector new_location);
 
-	// edit the respawn location
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setRespawnLocation(FVector new_location);
+	// Returns if the cube can be respawned or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	bool GetRespawnable();
 
-	// returns if the cube can be respawned or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	bool getRespawnable();
-	
-	// edit if the cube can be respawned or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setRespawnable(bool changeBehaviour);
+	// Edit if the cube can be respawned or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	void SetRespawnable(bool changeBehaviour);
 
-	// returnn if the cube change color on the respawn or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	bool getMaintainColorOnRespawn();
+	// Returns if the cube change color on the respawn or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	bool GetMaintainColorOnRespawn();
 
-	// edit if the cube can change color on respawn or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setMaintainColorOnRespawn(bool changeBehaviour);
+	// Edit if the cube can change color on respawn or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	void SetMaintainColorOnRespawn(bool changeBehaviour);
 
-	// return if the cube change location on respawn or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	bool getUseStartingLocationOnRespawn();
+	// Return if the cube change location on respawn or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	bool GetUseStartingLocationOnRespawn();
 
-	// edit if the cube change location on respawn or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setUseStartingLocationOnRespawn(bool changeBehaviour);
+	// Edit if the cube change location on respawn or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	void SetUseStartingLocationOnRespawn(bool changeBehaviour);
 
-	// retrun if the cube can be destroyed or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	bool getCanBeDestroyed();
+	// Return if the cube can be destroyed or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	bool GetCanBeDestroyed();
 
-	// edit if the cube can be destroyed or not
-	UFUNCTION(BlueprintCallable,category="Cube")
-	void setCanBeDestroyed(bool changeBehaviour);
+	// Edit if the cube can be destroyed or not
+	UFUNCTION(BlueprintCallable, category = "Cube")
+	void SetCanBeDestroyed(bool changeBehaviour);
 
-	// From IDestroyableInterface
-	//UFUNCTION(BlueprintCallable, category = "Cube")
-	virtual void interfacedDestroy() override;
+	//UFUNCTION(BlueprintCallable, Category=Cube)
+	virtual void InterfacedDestroy() override;
 
 	UFUNCTION(BlueprintCallable, category = "Cube")
-	virtual void interfacedDestroy(FVector HitLocation, FVector NormalImpulse) override;
+	virtual void InterfacedDestroy(FVector HitLocation, FVector NormalImpulse) override;
 
 	// To apply editor changes at realtime
 	virtual void OnConstruction(const FTransform& Transform) override;
-	
-	// executed immediately before gameplay begins
-	//virtual void PreInitializeComponents() override;
 
-	// other editor modifier
-	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-
-	// on actor transform move in editor
+	// On actor transform move in editor
 	virtual void PostEditMove(bool bFinished) override;
-
-	//void destroy(Collision_object collision);
-	
-	// Called when trows hit collision
-	//virtual void ReceiveHit(
-	//class UPrimitiveComponent * MyComp,
-	//	AActor * Other,
-	//class UPrimitiveComponent * OtherComp,
-	//	bool bSelfMoved,
-	//	FVector HitLocation,
-	//	FVector HitNormal,
-	//	FVector NormalImpulse,
-	//	const FHitResult & Hit
-	//	) override;
 };

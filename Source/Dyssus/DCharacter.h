@@ -49,83 +49,86 @@ public:
 
 	/** Minimum time interval between consecutive firings */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float gunTimeout;
+	float GunTimeout;
 
 	/** Character's walking speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float walkSpeed;
+	float WalkSpeed;
 
 	/** Character's running speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float sprintSpeed;
+	float SprintSpeed;
 
 	/** Interpolation speed for transitioning between walk and run speeds and viceversa */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float runWalkInterpSpeed;
+	float RunWalkInterpSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundCue* concreteSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundCue* grassSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundCue* glassSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundCue* woodSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	USoundCue* waterSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+	TArray<USoundCue*> sounds;
 
 	// Max distance for grabbing objects
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float grabDistance;
+	float GrabDistance;
 
 	// Distance of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float armLength;
+	float ArmLength;
 
 	// Horizontal offset of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float armOffsetH;
+	float ArmOffsetH;
 
 	// Vertical offset of grabbed object
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float armOffsetV;
+	float ArmOffsetV;
 
 	// How much grabbed object gets pushed away
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float dropImpulseMultiplier;
+	float DropImpulseMultiplier;
     
     // How much the character can jump
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-    float jumpSpeed;
+    float JumpSpeed;
     
     // How much the character can jump
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
-    float airControl;
+    float AirControl;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float LinearDamping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float LinearStiffness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float AngularDamping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float AngularStiffness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float InterpolationSpeed;
 
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
     
 	/** Reference to the object grabbed by the player */
-	UPrimitiveComponent* grabbedObject;
+	UPrimitiveComponent* GrabbedObject;
 
 	/** Force character to drop object */
 	void DropObject();
 
 	/** Color of the held cube, if any */
-	DTypes::DCOLOR cubeColor;
+	DTypes::DCOLOR CubeColor;
 
 protected:
 
 	/** Neat way for handling object dragging */
 	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
-	UPhysicsHandleComponent* physicsHandle;
+	UPhysicsHandleComponent* PhysicsHandle;
 
 	/** Whether player can shoot a projectile */
-	bool canShoot;
+	bool CanShoot;
 
 	/** Sets canShoot to true. It is called when gun cooldown expires */
 	void EnableFiring();
@@ -182,7 +185,7 @@ protected:
 		OBJECT,
 		NONE
 	};
-	ObjectInteractionState interactState;
+	ObjectInteractionState InteractState;
 
 protected:
 	// APawn interface

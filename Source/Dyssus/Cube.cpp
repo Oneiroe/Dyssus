@@ -2,349 +2,217 @@
 
 #include "Dyssus.h"
 #include "Cube.h"
+#include "ColorableFactory.h"
 #include "UnrealString.h"
 
 ACube::ACube()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->constructor"));
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
-
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> cubeAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color.Shape_Cube_Changable_Color"));
-	//changableColorCubeMesh = cubeAsset.Object;
-	//static ConstructorHelpers::FObjectFinder<UStaticMesh> cubePermanentAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent.Shape_Cube_Permanent"));
-	//permanentColorCubeMesh = cubePermanentAsset.Object;
-
-	//static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubeDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Changable_Color_DM.Shape_Cube_Changable_Color_DM"));
-	//destroyableChangableColorCubeMesh = cubeDestroyableAsset.Object;
-	//static ConstructorHelpers::FObjectFinder<UDestructibleMesh> cubePermanentDestroyableAsset(TEXT("/Game/Dyssus/Meshes/Shape_Cube_Permanent_DM.Shape_Cube_Permanent_DM"));
-	//destroyablePermanentColorCubeMesh = cubePermanentDestroyableAsset.Object;
-	
-	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CubeRootComponent"));
-
-	//UStaticMeshComponent* CubeMesh = NewObject<UStaticMeshComponent>(this);
-	
-	CubeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CubeMesh"));
-	//RootComponent = CubeMesh;
-	CubeMesh->SetSimulatePhysics(true);
-
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->bGenerateOverlapEvents = true;
+	
+	CanBeDestroyed = false;
 
-	SetRootComponent(CubeMesh);
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	DestructibleMesh = CreateDefaultSubobject<UDestructibleComponent>(TEXT("DestructibleMesh"));
 
-	BoxComponent->AttachParent = CubeMesh;
-
-	ColorableFactory = CreateDefaultSubobject<UColorableFactory>(TEXT("ColorableFactory"));
+	CubeMesh = StaticMesh;
+	Cast<UStaticMeshComponent>(CubeMesh)->SetSimulatePhysics(true);
+	SetRootComponent(Cast<UStaticMeshComponent>(CubeMesh));
+	BoxComponent->AttachParent = Cast<UStaticMeshComponent>(CubeMesh);
 }
 
 void ACube::OnConstruction(const FTransform& Transform)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->OnConstruction()"));
-	TArray<UStaticMeshComponent*> Components;
-	this->GetComponents<UStaticMeshComponent>(Components);
-	if (canChangeColor == true){
-		Components[0]->SetStaticMesh(changableColorCubeMesh);
-	}
-	else
-	{
-		Components[0]->SetStaticMesh(permanentColorCubeMesh);
-	}
-	Components[0]->SetMaterial(0, defaultMaterial);
+	DestructibleMesh->SetDestructibleMesh(DMesh);
+	StaticMesh->SetStaticMesh(SMesh);
 
-	ColorableFactory->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, DColor);
-	CubeMesh->SetMaterial(0, currentMaterial);
+	if (CanBeDestroyed && DestructibleMesh)
+	{
+		CubeMesh = DestructibleMesh;
+
+		Cast<UDestructibleComponent>(CubeMesh)->SetSimulatePhysics(true);
+
+		SetRootComponent(Cast<UDestructibleComponent>(CubeMesh));
+		BoxComponent->AttachParent = Cast<UDestructibleComponent>(CubeMesh);
+	}
+	else if (StaticMesh)
+	{
+		CubeMesh = StaticMesh;
+
+		Cast<UStaticMeshComponent>(CubeMesh)->SetSimulatePhysics(true);
+
+		SetRootComponent(Cast<UStaticMeshComponent>(CubeMesh));
+		BoxComponent->AttachParent = Cast<UStaticMeshComponent>(CubeMesh);
+	}
+
+	SetColor(DColor);
 }
 
 void ACube::PostEditMove(bool bFinished)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ACube->PostEditMove"));
-	startingLocation = RootComponent->GetComponentTransform().GetLocation();
-	if (useStartingLocationOnRespawn == true) respawnLocation = startingLocation;
+	StartingLocation = RootComponent->GetComponentTransform().GetLocation();
+	if (UseStartingLocationOnRespawn == true) RespawnLocation = StartingLocation;
 }
 
 // Called when the game starts or when spawned
 void ACube::BeginPlay()
 {
 	Super::BeginPlay();
-	//UE_LOG(LogTemp, Warning, TEXT("PLAY>cube components:%d"), RootComponent->GetNumChildrenComponents());
-
 }
 
 // Called every frame
-void ACube::Tick( float DeltaTime )
+void ACube::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 }
 
-TEnumAsByte<DTypes::DCOLOR> ACube::getDefaultColor()
+TEnumAsByte<DTypes::DCOLOR> ACube::GetDefaultColor()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getDefaultColor()"));
-	return defaultColor;
+	return DDefaultColor;
 }
 
-void ACube::setDefaultColor(UMaterial* newDefaultMaterial, DTypes::DCOLOR color)
+void ACube::SetDefaultColor(DTypes::DCOLOR color)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setDefaultColor()"));
-	defaultMaterial = newDefaultMaterial;
-	defaultColor = color;
+	DDefaultColor = color;
 }
 
-TEnumAsByte<DTypes::DCOLOR> ACube::getCurrentColor()
+bool ACube::GetCanChangeColor()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getCurrentColor()"));
-	//return this->GetDestructibleComponent()->GetMaterial(0)->GetMaterial();
-	/*TArray<UStaticMeshComponent*> Components;
-	this->GetComponents<UStaticMeshComponent>(Components);
-	if (Components.Num() < 1) return defaultColor;
-	return Components[0]->GetMaterial(0)->GetMaterial();*/
-
-	return currentColor;
+	return CanChangeColor;
 }
 
-void ACube::setCurrentColor(UMaterial* newCurrentMaterial, DTypes::DCOLOR color)
+void ACube::SetCanChangeColor(bool changeBehaviour)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setCurrentColor()"));
-	if (canChangeColor == false) return;
-	//print("ACube->setCurrentColor()");
-	//this->GetDestructibleComponent()->SetMaterial(0, newCurrentColor);
-	TArray<UStaticMeshComponent*> Components;
-	this->GetComponents<UStaticMeshComponent>(Components);
-	if (Components.Num() > 0)
-		Components[0]->SetMaterial(0, newCurrentMaterial);
-	currentMaterial = newCurrentMaterial;
-
-	currentColor = color;
+	CanChangeColor = changeBehaviour;
 }
 
-bool ACube::getCanChangeColor()
+FVector ACube::GetStartingLocation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getCanChangeColor()"));
-	return canChangeColor;
-}
-
-void ACube::setCanChangeColor(bool changeBehaviour)
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanChangeColor()"));
-	if (canChangeColor == changeBehaviour) return;
-	
-	TArray<UStaticMeshComponent*> Components;
-	this->GetComponents<UStaticMeshComponent>(Components);
-	if (Components.Num() < 1) return;
-	if (changeBehaviour == true)
-	{
-		Components[0]->SetStaticMesh(changableColorCubeMesh);
-	}
-	else{
-		Components[0]->SetStaticMesh(permanentColorCubeMesh);
-	}
-	canChangeColor = changeBehaviour;
-}
-
-FVector ACube::getStartingLocation()
-{
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getStartingLocation()"));
-	return startingLocation;
+	return StartingLocation;
 }
 
 // REMOVE-PENDING
-void ACube::setStartingLocation(FVector newStartingLocation)
+void ACube::SetStartingLocation(FVector newStartingLocation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setStartingLocation()"));
-	startingLocation = newStartingLocation;
+	StartingLocation = newStartingLocation;
 }
 
-FVector ACube::getRespawnLocation()
+FVector ACube::GetRespawnLocation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getRespawnLocation()"));
-	return respawnLocation;
+	return RespawnLocation;
 }
 
-void ACube::setRespawnLocation(FVector new_location)
+void ACube::SetRespawnLocation(FVector new_location)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setRespawnLocation()"));
-	respawnLocation = new_location;
+	RespawnLocation = new_location;
 }
 
-bool ACube::getRespawnable()
+bool ACube::GetRespawnable()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getRespawnable()"));
-	return respawnable;
+	return Respawnable;
 }
 
-void ACube::setRespawnable(bool changeBehaviour)
+void ACube::SetRespawnable(bool changeBehaviour)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setRespawnable()"));
-	respawnable = changeBehaviour;
+	Respawnable = changeBehaviour;
 }
 
-bool ACube::getMaintainColorOnRespawn()
+bool ACube::GetMaintainColorOnRespawn()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getMaintainColorOnRespawn()"));
-	return maintainColorOnRespawn;
+	return MaintainColorOnRespawn;
 }
 
-void ACube::setMaintainColorOnRespawn(bool changeBehaviour)
+void ACube::SetMaintainColorOnRespawn(bool changeBehaviour)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setMaintainColorOnRespawn()"));
-	maintainColorOnRespawn = changeBehaviour;
+	MaintainColorOnRespawn = changeBehaviour;
 }
 
-bool ACube::getUseStartingLocationOnRespawn()
+bool ACube::GetUseStartingLocationOnRespawn()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getUseStartingLocationOnRespawn()"));
-	return useStartingLocationOnRespawn;
+	return UseStartingLocationOnRespawn;
 }
 
-void ACube::setUseStartingLocationOnRespawn(bool changeBehaviour)
+void ACube::SetUseStartingLocationOnRespawn(bool changeBehaviour)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setUseStartingLocationOnRespawn()"));
-	useStartingLocationOnRespawn = changeBehaviour;
+	UseStartingLocationOnRespawn = changeBehaviour;
 }
 
-bool ACube::getCanBeDestroyed()
+bool ACube::GetCanBeDestroyed()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->getCanBeDestroyed()"));
-	return canBeDestroyed;
+	return CanBeDestroyed;
 }
 
-void ACube::setCanBeDestroyed(bool changeBehaviour)
+void ACube::SetCanBeDestroyed(bool changeBehaviour)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->setCanBeDestroyed()"));
-	//print("ACube->setCanBeDestroyed()");
-	
-	canBeDestroyed = changeBehaviour;
+	CanBeDestroyed = changeBehaviour;
 }
 
-//void ACube::ReceiveHit(
-//	class UPrimitiveComponent * MyComp,
-//	AActor * Other,
-//	class UPrimitiveComponent * OtherComp,
-//	bool bSelfMoved,
-//	FVector HitLocation,
-//	FVector HitNormal,
-//	FVector NormalImpulse,
-//	const FHitResult & Hit)
-//{
-//	UE_LOG(LogTemp, Warning, TEXT("ACube->HITevent()"));
-//	print("ACube->HIT()");
-//}
-
-
-void ACube::interfacedDestroy()
+void ACube::InterfacedDestroy()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
 	this->Destroy();
-	if (respawnable)
-	{
-		respawnCube();
-	}
+	
+	if (Respawnable) RespawnCube();
 }
-	
-void ACube::interfacedDestroy(FVector HitLocation, FVector NormalImpulse)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ACube->Destroy()"));
-		
-		if (canBeDestroyed == false) return;
-		
-		TArray<UStaticMeshComponent*> Components;
-		this->GetComponents<UStaticMeshComponent>(Components);
-		if (Components.Num() < 1) return;
 
-		GetWorldTimerManager().SetTimer(this, &ACube::interfacedDestroy, 2.0f);
-		
-		FTransform destructionTransform = Components[0]->GetComponentTransform();
-		if (maintainColorOnRespawn == true)
-		{
-			defaultColor = getCurrentColor();
-		}
-
-		Components[0]->DestroyComponent();
-
-		UDestructibleComponent* cubeDestroyableMesh = NewObject<UDestructibleComponent>(this);
-		cubeDestroyableMesh->SetWorldTransform(destructionTransform);
-		if (canChangeColor == true)
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyableChangableColorCubeMesh);
-		}
-		else
-		{
-			cubeDestroyableMesh->SetDestructibleMesh(destroyablePermanentColorCubeMesh);
-		}
-		cubeDestroyableMesh->SetSimulatePhysics(true);
-		cubeDestroyableMesh->SetMaterial(0, currentMaterial);
-		cubeDestroyableMesh->SetMaterial(1, currentMaterial);
-		cubeDestroyableMesh->RegisterComponent();
-		SetRootComponent(cubeDestroyableMesh);
-		RootComponent->SetVisibility(true);
-		//cubeDestroyableMesh->ApplyDamage(float DamageAmount, const FVector & HitLocation, const FVector & ImpulseDir, float ImpulseStrength);
-		//cubeDestroyableMesh->ApplyDamage(5.0, HitLocation, NormalImpulse, 5.0);
-		//void ApplyRadiusDamage(float BaseDamage,	const FVector & HurtOrigin,	float DamageRadius,	float ImpulseStrength,	bool bFullDamage)
-		cubeDestroyableMesh->ApplyRadiusDamage(10.0, HitLocation, 2.0, 5.0, false);
-		this->SetActorEnableCollision(false);
-		cubeDestroyableMesh->SetCollisionProfileName(TEXT("OverlapAll"));
-		//cubeDestroyableMesh->SetCollisionEnabled(false);;
-		//float startTime = GetWorld()->TimeSeconds;
-		//this->AActor::Destroy();
-	}
-
-
-void ACube::respawnCube()
+void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACube->respawnCube()"));
-	
+	if (!CanBeDestroyed) return;
+
+	GetWorldTimerManager().SetTimer(this, &ACube::InterfacedDestroy, 2.0f);
+
+	FTransform destructionTransform = GetRootComponent()->GetComponentTransform();
+	if (MaintainColorOnRespawn == true) DDefaultColor = GetColor();
+
+	GetRootComponent()->DestroyComponent();
+
+	CubeMesh = NewObject<UDestructibleComponent>(this);
+	Cast<UDestructibleComponent>(CubeMesh)->SetWorldTransform(destructionTransform);
+
+	Cast<UDestructibleComponent>(CubeMesh)->SetSimulatePhysics(true);
+	Cast<UDestructibleComponent>(CubeMesh)->SetMaterial(0, Material);
+	Cast<UDestructibleComponent>(CubeMesh)->RegisterComponent();
+
+	SetRootComponent(Cast<UDestructibleComponent>(CubeMesh));
+	RootComponent->SetVisibility(true);
+
+	Cast<UDestructibleComponent>(CubeMesh)->ApplyRadiusDamage(10.0, HitLocation, 2.0, 5.0, false);
+	this->SetActorEnableCollision(false);
+	Cast<UDestructibleComponent>(CubeMesh)->SetCollisionProfileName(TEXT("OverlapAll"));
+}
+
+
+void ACube::RespawnCube()
+{
 	FVector location;
-	if (useStartingLocationOnRespawn == true)
-	{
-		location=startingLocation;
-	}
-	else
-	{
-		location = respawnLocation;		
-	}
+	if (UseStartingLocationOnRespawn == true) location = StartingLocation;
+	else location = RespawnLocation;
 	ACube* respawnedCube = (ACube*)GetWorld()->SpawnActor(ACube::StaticClass(), &location);
-	
-	respawnedCube->setCanChangeColor(canChangeColor);	
-	TArray<UStaticMeshComponent*> Components;
-	respawnedCube->GetComponents<UStaticMeshComponent>(Components);
-	if (Components.Num() < 1) return;
-	if (canChangeColor == true)
-	{
-		Components[0]->SetStaticMesh(changableColorCubeMesh);
-	}
-	else
-	{
-		Components[0]->SetStaticMesh(permanentColorCubeMesh);
-	}
-	//if (maintainColorOnRespawn == true)
-	//{
-	//	Components[0]->SetMaterial(0, defaultColor);
-	//}
-	//else
-	//{
-	//	Components[0]->SetMaterial(0, defaultColor);
-	//}
-	
-	Components[0]->SetMaterial(0, defaultMaterial);
 
-	respawnedCube->setDefaultColor(defaultMaterial, DTypes::DCOLOR::WHITE);
+	respawnedCube->SetCanChangeColor(CanChangeColor);
 
-	respawnedCube->setStartingLocation(location);
-	respawnedCube->setRespawnLocation(respawnLocation);
-	respawnedCube->setRespawnable(respawnable);
-	respawnedCube->setMaintainColorOnRespawn(maintainColorOnRespawn);
-	respawnedCube->setCanBeDestroyed(canBeDestroyed);
-	respawnedCube->setUseStartingLocationOnRespawn(useStartingLocationOnRespawn);
-	respawnedCube->changableColorCubeMesh = changableColorCubeMesh;
-	respawnedCube->permanentColorCubeMesh = permanentColorCubeMesh;
-	respawnedCube->destroyableChangableColorCubeMesh = destroyableChangableColorCubeMesh;
-	respawnedCube->destroyablePermanentColorCubeMesh = destroyablePermanentColorCubeMesh;
+	respawnedCube->SetDefaultColor(DDefaultColor);
+
+	respawnedCube->SetStartingLocation(location);
+	respawnedCube->SetRespawnLocation(RespawnLocation);
+	respawnedCube->SetRespawnable(Respawnable);
+	respawnedCube->SetMaintainColorOnRespawn(MaintainColorOnRespawn);
+	respawnedCube->SetCanBeDestroyed(CanBeDestroyed);
+	respawnedCube->SetUseStartingLocationOnRespawn(UseStartingLocationOnRespawn);
+	respawnedCube->CubeMesh = CubeMesh;
 }
 
 void ACube::SetColor(DTypes::DCOLOR dColor)
 {
 	DColor = dColor;
-	ColorableFactory->GetMaterialFromColorAndClass(this->GetClass(), currentMaterial, dColor);
+
+	if (CubeMaterials.Num() > DColor)
+	{
+		Material = CubeMaterials[DColor];
+
+		if (CanBeDestroyed) Cast<UDestructibleComponent>(CubeMesh)->SetMaterial(0, Material);
+		else Cast<UStaticMeshComponent>(CubeMesh)->SetMaterial(0, Material);
+	}
 }
 
 DTypes::DCOLOR ACube::GetColor()

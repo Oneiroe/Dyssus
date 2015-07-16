@@ -44,7 +44,7 @@ void ADProjectile::OnHit(AActor* OtherActor, UPrimitiveComponent* OtherComp, FVe
 		{
 			// TODO This needs some review, cube could absorb some damage before crumbling into pieces
 			IDestroyableInterface* destrActor = dynamic_cast<IDestroyableInterface*>(OtherActor);
-			destrActor->interfacedDestroy(Hit.Location, NormalImpulse);
+			destrActor->InterfacedDestroy(Hit.Location, NormalImpulse);
 		}
 		else if (OtherComp->IsSimulatingPhysics()) OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 

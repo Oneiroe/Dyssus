@@ -14,5 +14,4 @@ class UGrabbableInterface : public UInterface
 class IGrabbableInterface
 {
 	GENERATED_IINTERFACE_BODY()
-
 };

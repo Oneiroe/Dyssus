@@ -4,17 +4,18 @@
 
 #include "GameFramework/Actor.h"
 #include "Cube.h"
+#include "DStaticLibrary.h"
 #include "CubeColorator.generated.h"
 
 UENUM()
-enum inputHandlingBehaviour{
+enum InputHandlingBehaviour{
 		LOGIC_AND                UMETA(DisplayName = "AND"),
-		LOGIC_OR                    UMETA(DisplayName = "OR"),
-		CUSTOM_LOGIC                    UMETA(DisplayName = "Custom")
+		LOGIC_OR                 UMETA(DisplayName = "OR"),
+		CUSTOM_LOGIC             UMETA(DisplayName = "Custom")
 };
 
 UENUM()
-enum inputCorrespondingAction{
+enum InputCorrespondingAction{
 	CHANGE_COLOR	UMETA(DisplayName = "Change Color"),
 	SWITCH_ON		UMETA(DisplayName = "Switch ON"),
 	SWITCH_OFF		UMETA(DisplayName = "Switch OFF")
@@ -25,25 +26,21 @@ struct FInput
 {
 	GENERATED_USTRUCT_BODY();
 
-	//combination of input
+	// Combination of input
 	UPROPERTY(EditAnywhere)
-	TArray<bool> buttonsStatus;
+	TArray<bool> ButtonsStatus;
 
-	//how to combine the inputs received
+	// How to combine the inputs received
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<inputHandlingBehaviour> handlingBehaviour;
+	TEnumAsByte<InputHandlingBehaviour> HandlingBehaviour;
 
-	//how to combine the inputs received
+	// How to combine the inputs received
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<inputCorrespondingAction> actionToPerform;
+	TEnumAsByte<InputCorrespondingAction> ActionToPerform;
 
-	//if the input is active or not
+	// If the input is active or not
 	UPROPERTY(EditAnywhere)
-	UMaterial* color;
-
-	//if the input is active or not
-	UPROPERTY(EditAnywhere)
-	bool switcher;
+	bool Switcher;
 };
 
 
@@ -56,42 +53,39 @@ class DYSSUS_API ACubeColorator : public AActor
 private:
 	
 
-	// define if the colorator is active of not
+	// Define if the colorator is active of not
 	UPROPERTY(EditAnywhere)
-	bool isActive;
+	bool IsActive;
 
-	// material that define the color used to color the cube
+	// Material that define the color used to color the cube
 	UPROPERTY(EditAnywhere)
-	UMaterial* coloratorColor;
+	TEnumAsByte<DTypes::DCOLOR> ColoratorColor;
 
-	// sound played on colorator activation
+	// Sound played on colorator activation
 	UPROPERTY(EditAnywhere)
-	class USoundBase * soundStartUp;
+	class USoundBase * SoundStartUp;
 
-	// sound played on colorator deactivation
+	// Sound played on colorator deactivation
 	UPROPERTY(EditAnywhere)
-	class USoundBase * soundShoutdown;
+	class USoundBase * SoundShoutdown;
 
-	// sound played changing color
+	// Sound played changing color
 	UPROPERTY(EditAnywhere)
-	class USoundBase * soundChangeColor;
+	class USoundBase * SoundChangeColor;
 
-	// sound played on colorator utilization
+	// Sound played on colorator utilization
 	UPROPERTY(EditAnywhere)
-	class USoundBase * soundUsed;
+	class USoundBase * SoundUsed;
 
-	// actor of which input will be handled
+	// Actor of which input will be handled
 	UPROPERTY(EditAnywhere)
-	TArray<AActor*> inputActors;
+	TArray<AActor*> InputActors;
 
-	// input to handle
+	// Input to handle
 	UPROPERTY(EditAnywhere)
-	TArray<FInput> inputToHandle;
-
-
+	TArray<FInput> InputToHandle;
 
 public:	
-
 
 	// Sets default values for this actor's properties
 	ACubeColorator();
@@ -104,28 +98,24 @@ public:
 
 	//UFUNCTION(BlueprintImplementableEvent, Meta = (FriendlyName = "ActorBeginOverlap"), Category = "Collision")
 	// Called when this actor overlaps another actor
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	virtual void ReceiveActorBeginOverlap(AActor* OtherActor) override;
 
 	// To apply editor changes at realtime
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-
 	// Returns the color Material of the colorator
 	UFUNCTION(BlueprintCallable, category = "Colorator")
-	UMaterial* getColor();
+	TEnumAsByte<DTypes::DCOLOR> GetColor();
 
 	// Change the color used by the colorator
 	UFUNCTION(BlueprintCallable, category = "Colorator")
-	void setColor(UMaterial* newColor);
+	void SetColor(DTypes::DCOLOR newColor);
 
-	// return if the colorator is active or not
+	// Returns whether the colorator is active or not
 	UFUNCTION(BlueprintCallable, category = "Colorator")
-	bool getActiveStatus();
+	bool GetActiveStatus();
 
-	// set the colorator to active or not
+	// Set the colorator to active or not
 	UFUNCTION(BlueprintCallable, category = "Colorator")
-	void setActiveStatus(bool newBehaviour);	
-	
-	//UFUNCTION(BlueprintCallable, category = "Colorator")
-	//template<class T> void inputHandling(TArray<T> inputs);
+	void SetActiveStatus(bool newBehaviour);	
 };

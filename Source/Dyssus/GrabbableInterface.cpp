@@ -6,4 +6,5 @@
 UGrabbableInterface::UGrabbableInterface(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+
 }

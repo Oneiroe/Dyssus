@@ -11,25 +11,25 @@ class DYSSUS_API ADButton : public AActor
 	GENERATED_BODY()
 
 private:
-	int numOverlappingActors;
+	int NumOverlappingActors;
 
 	void PressButton(float DeltaTime);
 
 	void ReleaseButton(float DeltaTime);
 
-	float initialZ;
+	float InitialZ;
 
 	// This indicates whether the button is currently pressed (true) or released (false)
 	UPROPERTY(EditAnywhere, Category = State)
-		bool isPressed;
+	bool IsPressed;
 
 	// Sound played when the button is released
 	UPROPERTY(EditAnywhere, Category = Sounds)
-		USoundCue* onReleaseSound;
+	USoundCue* OnReleaseSound;
 
 	// Sound played when the button is pressed
 	UPROPERTY(EditAnywhere, Category = Sounds)
-		USoundCue* onPressSound;
+	USoundCue* OnPressSound;
 
 public:
 	// Sets default values for this actor's properties
@@ -44,17 +44,17 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		float deltaHeight;
+	float DeltaHeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		float interpSpeed;
+	float InterpSpeed;
 
 	// Returns whether the button is currently pressed (true) or released (false)
 	UFUNCTION(BlueprintCallable, Category = State)
-		bool IsButtonPressed();
+	bool IsButtonPressed();
 
 	UFUNCTION(BlueprintCallable, Category = State)
-		void SetPressed(bool newPressed);
+	void SetPressed(bool newPressed);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USphereComponent* SphereComponent;
@@ -64,28 +64,28 @@ public:
 
 	// Setters and getters for release sound
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		USoundCue* GetOnReleaseSound();
+	USoundCue* GetOnReleaseSound();
 
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		void SetOnReleaseSound(USoundCue* releaseSound);
+	void SetOnReleaseSound(USoundCue* releaseSound);
 
 	// Setters and getters for press sound
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		USoundCue* GetOnPressSound();
+	USoundCue* GetOnPressSound();
 
 	UFUNCTION(BlueprintCallable, Category = Sounds)
-		void SetOnPressSound(USoundCue* pressSound);
+	void SetOnPressSound(USoundCue* pressSound);
 
 	// Functions for collisions
 	UFUNCTION(BlueprintCallable, Category = Collision)
-		void OnBeginOverlap(class AActor* OtherActor,
-	class UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult &SweepResult);
+	void OnBeginOverlap(class AActor* OtherActor,
+						class UPrimitiveComponent* OtherComp,
+						int32 OtherBodyIndex,
+						bool bFromSweep,
+						const FHitResult &SweepResult);
 
 	UFUNCTION(BlueprintCallable, Category = Collision)
-		void OnEndOverlap(class AActor * OtherActor,
-	class UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
+	void OnEndOverlap(class AActor * OtherActor,
+					class UPrimitiveComponent* OtherComp,
+					int32 OtherBodyIndex);
 };

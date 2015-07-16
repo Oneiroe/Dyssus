@@ -34,37 +34,43 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	Mesh1P->CastShadow = false;
 
 	// Player can shoot by default when game starts
-	canShoot = true;
+	CanShoot = true;
 
 	// By default, Walk Speed is the one already in use for the Character Movement Component
-	walkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	WalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 
 	// By default, Sprint Speed is twice Walk Speed
-	sprintSpeed = walkSpeed * 2;
+	SprintSpeed = WalkSpeed * 2;
 
 	// By default, character is wielding its gun
-	interactState = ObjectInteractionState::GUN;
+	InteractState = ObjectInteractionState::GUN;
 
-	grabDistance = 2000.f;
-	armLength = 250.f;
-	dropImpulseMultiplier = 500000.f;
+	GrabDistance = 2000.f;
+	ArmLength = 250.f;
+	DropImpulseMultiplier = 500000.f;
     
-    airControl = .5f;
-    jumpSpeed = 450.f;
+    AirControl = .5f;
+    JumpSpeed = 450.f;
     
     // Edit Character's default jump settings to handle air control and editable jump speed
-    CharacterMovement->AirControl = airControl;
-    CharacterMovement->JumpZVelocity = jumpSpeed;
+    CharacterMovement->AirControl = AirControl;
+    CharacterMovement->JumpZVelocity = JumpSpeed;
+
+	LinearDamping = 10000.f;
+	LinearStiffness = 10000.f;
+	AngularDamping = 10000.f;
+	AngularStiffness = 10000.f;
+	InterpolationSpeed = 10000.f;
 
 	// How object should behave once grabbed
-	physicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
-	physicsHandle->LinearDamping = 10000.f;
-	physicsHandle->LinearStiffness = 5000.f;
-	physicsHandle->AngularDamping = 10000.f;
-	physicsHandle->AngularStiffness = 5000.f;
-	physicsHandle->InterpolationSpeed = 5000.f;
+	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+	PhysicsHandle->LinearDamping = LinearDamping;
+	PhysicsHandle->LinearStiffness = LinearStiffness;
+	PhysicsHandle->AngularDamping = AngularDamping;
+	PhysicsHandle->AngularStiffness = AngularStiffness;
+	PhysicsHandle->InterpolationSpeed = InterpolationSpeed;
 
-	cubeColor = DTypes::DCOLOR::NONE;
+	CubeColor = DTypes::DCOLOR::NONE;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,27 +109,27 @@ void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponen
 
 void ADCharacter::Tick(float DeltaSeconds)
 {
-	if (interactState == ObjectInteractionState::OBJECT) CarryObject();
+	if (InteractState == ObjectInteractionState::OBJECT) CarryObject();
 }
 
 void ADCharacter::CarryObject()
 {
 	FVector newLocation =
 		GetActorLocation() +
-		FirstPersonCameraComponent->GetForwardVector() * armLength +
-		FirstPersonCameraComponent->GetRightVector() * armOffsetH +
-		FirstPersonCameraComponent->GetUpVector() * armOffsetV;
+		FirstPersonCameraComponent->GetForwardVector() * ArmLength +
+		FirstPersonCameraComponent->GetRightVector() * ArmOffsetH +
+		FirstPersonCameraComponent->GetUpVector() * ArmOffsetV;
 
-	physicsHandle->SetTargetLocationAndRotation(newLocation, GetControlRotation());
+	PhysicsHandle->SetTargetLocationAndRotation(newLocation, GetControlRotation());
 }
 
 void ADCharacter::GrabDropObject()
 {
-	switch (interactState)
+	switch (InteractState)
 	{
 		// If Take/Leave button is pressed while gun is being held, the character puts it back
 		case ObjectInteractionState::GUN:
-			interactState = ObjectInteractionState::NONE;
+			InteractState = ObjectInteractionState::NONE;
 			Mesh1P->SetVisibility(false);
 
 			break;
@@ -139,7 +145,7 @@ void ADCharacter::GrabDropObject()
 		default:
 			// Location the PC is focused on
 			const FVector Start = GetActorLocation();
-			const FVector End = Start + GetControlRotation().Vector() * grabDistance;
+			const FVector End = Start + GetControlRotation().Vector() * GrabDistance;
 
 			// Trace data is stored here
 			FHitResult HitData(ForceInit);
@@ -161,7 +167,7 @@ bool ADCharacter::CanGrab(AActor* hitActor)
     // Location the PC is focused on
     const FVector Start = GetActorLocation();
     // The vector points to the ground below the PC
-    const FVector End = Start + GetActorUpVector() * -1 * grabDistance;
+    const FVector End = Start + GetActorUpVector() * -1 * GrabDistance;
     
     // Trace data is stored here
     FHitResult HitData(ForceInit);
@@ -198,70 +204,70 @@ void ADCharacter::GrabObject(FHitResult* hitData)
         return;
     }
 
-	interactState = ObjectInteractionState::OBJECT;
+	InteractState = ObjectInteractionState::OBJECT;
 
-	grabbedObject = hitData->GetComponent();
-	grabbedObject->SetWorldRotation(GetControlRotation());
+	GrabbedObject = hitData->GetComponent();
+	GrabbedObject->SetWorldRotation(GetControlRotation());
 
 	AActor* hitActor = hitData->GetActor();
 
 	if (hitActor->IsA(ACube::StaticClass())) 
 	{
 		UDStaticLibrary::Print("It's a cube!");
-		cubeColor = Cast<ACube>(hitActor)->getCurrentColor();
+		CubeColor = Cast<ACube>(hitActor)->GetColor();
 	}
 
 	// Attach grabbable to character
-	physicsHandle->GrabComponent(grabbedObject, hitData->BoneName, hitData->Location, true);
+	PhysicsHandle->GrabComponent(GrabbedObject, hitData->BoneName, hitData->Location, true);
 }
 
 void ADCharacter::DropObject()
 {
 	// Drop grabbable
-	physicsHandle->ReleaseComponent();
+	PhysicsHandle->ReleaseComponent();
 
 	// According to specification, dropped objects should be pushed slightly forward
-	FVector forceVector = GetControlRotation().Vector() * dropImpulseMultiplier;
-	grabbedObject->AddForce(forceVector);
+	FVector forceVector = GetControlRotation().Vector() * DropImpulseMultiplier;
+	GrabbedObject->AddForce(forceVector);
 	
-	cubeColor = DTypes::DCOLOR::NONE;
+	CubeColor = DTypes::DCOLOR::NONE;
 
-	interactState = ObjectInteractionState::NONE;
+	InteractState = ObjectInteractionState::NONE;
 }
 
 void ADCharacter::Run()
 {
 	// Smooth interpolation to faster run speed
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
-															sprintSpeed, GetWorld()->GetDeltaSeconds(), 
-															runWalkInterpSpeed);
+															SprintSpeed, GetWorld()->GetDeltaSeconds(), 
+															RunWalkInterpSpeed);
 }
 
 void ADCharacter::StopRunning()
 {
 	// Smooth interpolation to slower walk speed
 	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
-															walkSpeed, GetWorld()->GetDeltaSeconds(), 
-															runWalkInterpSpeed);
+															WalkSpeed, GetWorld()->GetDeltaSeconds(), 
+															RunWalkInterpSpeed);
 }
 
 void ADCharacter::OnFire()
 {
 	// Check whether gun timeout is over
-	if (!canShoot || interactState == ObjectInteractionState::OBJECT) return;
+	if (!CanShoot || InteractState == ObjectInteractionState::OBJECT) return;
 
 	// If character was not holding any object, he can pick his gun again
-	else if (interactState == ObjectInteractionState::NONE) 
+	else if (InteractState == ObjectInteractionState::NONE) 
 	{
-		interactState = ObjectInteractionState::GUN;
+		InteractState = ObjectInteractionState::GUN;
 		Mesh1P->SetVisibility(true);
 
 		return;
 	}
 
 	// Start timer for gun cooldown
-	canShoot = false;
-	GetWorldTimerManager().SetTimer(this, &ADCharacter::EnableFiring, gunTimeout);
+	CanShoot = false;
+	GetWorldTimerManager().SetTimer(this, &ADCharacter::EnableFiring, GunTimeout);
 	
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -271,38 +277,28 @@ void ADCharacter::OnFire()
 		const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
 
 		UWorld* const World = GetWorld();
-		if (World != NULL)
-		{
-			// spawn the projectile at the muzzle
-			World->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-		}
+		
+		// spawn the projectile at the muzzle
+		if (World) World->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 	}
 
 	// try and play the sound if specified
-	if (FireSound != NULL)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
+	if (FireSound) UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 
 	// try and play a firing animation if specified
-	if (FireAnimation != NULL)
+	if (FireAnimation)
 	{
 		// Get the animation object for the arms mesh
 		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != NULL)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
+		if (AnimInstance) AnimInstance->Montage_Play(FireAnimation, 1.f);
 	}
 
 }
 
 void ADCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
-	if (TouchItem.bIsPressed == true)
-	{
-		return;
-	}
+	if (TouchItem.bIsPressed == true) return;
+	
 	TouchItem.bIsPressed = true;
 	TouchItem.FingerIndex = FingerIndex;
 	TouchItem.Location = Location;
@@ -311,14 +307,8 @@ void ADCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector 
 
 void ADCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
-	if (TouchItem.bIsPressed == false)
-	{
-		return;
-	}
-	if ((FingerIndex == TouchItem.FingerIndex) && (TouchItem.bMoved == false))
-	{
-		OnFire();
-	}
+	if (TouchItem.bIsPressed == false) return;
+	if ((FingerIndex == TouchItem.FingerIndex) && (TouchItem.bMoved == false)) OnFire();
 	TouchItem.bIsPressed = false;
 }
 
@@ -328,10 +318,10 @@ void ADCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector
 	{
 		if (TouchItem.bIsPressed)
 		{
-			if (GetWorld() != nullptr)
+			if (GetWorld())
 			{
 				UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
-				if (ViewportClient != nullptr)
+				if (ViewportClient)
 				{
 					FVector MoveDelta = Location - TouchItem.Location;
 					FVector2D ScreenSize;
@@ -402,20 +392,13 @@ bool ADCharacter::EnableTouchscreenMovement(class UInputComponent* InputComponen
 
 void ADCharacter::EnableFiring()
 {
-	canShoot = true;
+	CanShoot = true;
 }
 
 void ADCharacter::PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material)
 {
 	USoundCue* sound;
-
 	EPhysicalSurface surfaceType = material->SurfaceType;
-
-	if (surfaceType == SurfaceType2) sound = glassSound;
-	else if (surfaceType == SurfaceType3) sound = waterSound;
-	else if (surfaceType == SurfaceType4) sound = grassSound;
-	else if (surfaceType == SurfaceType5) sound = woodSound;
-	else sound = concreteSound; // Default sound -- Concrete surface
-
+	sound = sounds[surfaceType];
 	if (sound) PlaySoundAtLocation(sound, location);
 }
