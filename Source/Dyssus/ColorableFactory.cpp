@@ -9,8 +9,11 @@
 
 bool UColorableFactory::CompareColors(AActor* a, AActor* b)
 {
-	if (!a->Implements<UColorable>() || !b->Implements<UColorable>()) return false;
+	IColorable* aa = InterfaceCast<IColorable>(a);
+	IColorable* bb = InterfaceCast<IColorable>(b);
 
-	return Cast<IColorable>(a)->GetColor() && Cast<IColorable>(b)->GetColor();
+	if (!aa || !bb) return false;
+
+	return aa->GetColor() && bb->GetColor();
 }
 
