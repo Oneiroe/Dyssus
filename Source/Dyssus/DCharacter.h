@@ -111,7 +111,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
-    
+
 	/** Reference to the object grabbed by the player */
 	UPrimitiveComponent* GrabbedObject;
 

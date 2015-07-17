@@ -25,9 +25,15 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	FVector StartingLocation;
 
+	UPROPERTY(VisibleAnywhere)
+	FRotator StartingRotation;
+
 	// Location that the cube will reach on respawn
 	UPROPERTY(EditAnywhere)
 	FVector RespawnLocation;
+
+	UPROPERTY(EditAnywhere)
+	FRotator RespawnRotation;
 
 	UPROPERTY(EditAnywhere)
 	bool Respawnable;
@@ -41,16 +47,12 @@ private:
 
 	// Define if the cube will be respawned at his starting location or at the respawn one
 	UPROPERTY(EditAnywhere)
-	bool UseStartingLocationOnRespawn;
+	bool UseStartingTransformOnRespawn;
 
 	// Respawns the cube with the property set on construction
 	void RespawnCube();
 
 public:
-
-	class UStaticMeshComponent* StaticMesh;
-
-	class UDestructibleComponent* DestructibleMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rendering)
 	class UStaticMesh* SMesh;
@@ -77,12 +79,22 @@ public:
 	virtual void SetColor(DTypes::DCOLOR dColor_) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UBoxComponent* BoxComponent;
+	class USceneComponent* SceneComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TArray<UMaterial*> CubeMaterials;
 
-	UObject* CubeMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
+	float BaseDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
+	float DamageRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
+	float ImpulseStrength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh)
+	class UPrimitiveComponent* CubeMesh;
 
 	// Sets default values for this actor's properties
 	ACube();
@@ -93,62 +105,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
-	// Returns if the cube can change color or is a permanent one
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	bool GetCanChangeColor();
-
-	// Make the cube color changing possible or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetCanChangeColor(bool changeBehaviour);
-
-	// Return the starting location of the cube
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	FVector GetStartingLocation();
-
-	// Edit the starting location of the cube
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetStartingLocation(FVector newStartingLocation);//REMOVE-PENDING
-
-	// Return the respawn location
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	FVector GetRespawnLocation();
-
-	// Edit the respawn location
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetRespawnLocation(FVector new_location);
-
-	// Returns if the cube can be respawned or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	bool GetRespawnable();
-
-	// Edit if the cube can be respawned or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetRespawnable(bool changeBehaviour);
-
-	// Returns if the cube change color on the respawn or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	bool GetMaintainColorOnRespawn();
-
-	// Edit if the cube can change color on respawn or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetMaintainColorOnRespawn(bool changeBehaviour);
-
-	// Return if the cube change location on respawn or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	bool GetUseStartingLocationOnRespawn();
-
-	// Edit if the cube change location on respawn or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetUseStartingLocationOnRespawn(bool changeBehaviour);
-
-	// Return if the cube can be destroyed or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	bool GetCanBeDestroyed();
-
-	// Edit if the cube can be destroyed or not
-	UFUNCTION(BlueprintCallable, category = "Cube")
-	void SetCanBeDestroyed(bool changeBehaviour);
-
 	//UFUNCTION(BlueprintCallable, Category=Cube)
 	virtual void InterfacedDestroy() override;
 
@@ -157,7 +113,4 @@ public:
 
 	// To apply editor changes at realtime
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-	// On actor transform move in editor
-	virtual void PostEditMove(bool bFinished) override;
 };

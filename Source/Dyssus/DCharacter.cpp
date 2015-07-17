@@ -48,13 +48,13 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	GrabDistance = 2000.f;
 	ArmLength = 250.f;
 	DropImpulseMultiplier = 500000.f;
-    
-    AirControl = .5f;
-    JumpSpeed = 450.f;
-    
-    // Edit Character's default jump settings to handle air control and editable jump speed
-    CharacterMovement->AirControl = AirControl;
-    CharacterMovement->JumpZVelocity = JumpSpeed;
+
+	AirControl = .5f;
+	JumpSpeed = 450.f;
+
+	// Edit Character's default jump settings to handle air control and editable jump speed
+	CharacterMovement->AirControl = AirControl;
+	CharacterMovement->JumpZVelocity = JumpSpeed;
 
 	LinearDamping = 10000.f;
 	LinearStiffness = 10000.f;
@@ -79,7 +79,7 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 void ADCharacter::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 {
 	// set up gameplay key bindings
-	check(InputComponent); 
+	check(InputComponent);
 
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
@@ -128,81 +128,81 @@ void ADCharacter::GrabDropObject()
 	switch (InteractState)
 	{
 		// If Take/Leave button is pressed while gun is being held, the character puts it back
-		case ObjectInteractionState::GUN:
-			InteractState = ObjectInteractionState::NONE;
-			Mesh1P->SetVisibility(false);
+	case ObjectInteractionState::GUN:
+		InteractState = ObjectInteractionState::NONE;
+		Mesh1P->SetVisibility(false);
 
-			break;
+		break;
 
 		// Character drops grabbed object
-		case ObjectInteractionState::OBJECT:
-			DropObject();
-			
-			break;
+	case ObjectInteractionState::OBJECT:
+		DropObject();
+
+		break;
 
 		// Check whether line trace intersects a 'grabbable' object. If so, character grabs it.
-		case ObjectInteractionState::NONE:
-		default:
-			// Location the PC is focused on
-			const FVector Start = GetActorLocation();
-			const FVector End = Start + GetControlRotation().Vector() * GrabDistance;
+	case ObjectInteractionState::NONE:
+	default:
+		// Location the PC is focused on
+		const FVector Start = GetActorLocation();
+		const FVector End = Start + GetControlRotation().Vector() * GrabDistance;
 
-			// Trace data is stored here
-			FHitResult HitData(ForceInit);
+		// Trace data is stored here
+		FHitResult HitData(ForceInit);
 
-			if (UDStaticLibrary::Trace(this, Start, End, HitData))
-			{
+		if (UDStaticLibrary::Trace(this, Start, End, HitData))
+		{
 
-				AActor* hitActor = HitData.GetActor();
-				if (hitActor && hitActor->Implements<UGrabbableInterface>())
-					GrabObject(&HitData);
-			}
+			AActor* hitActor = HitData.GetActor();
+			if (hitActor && hitActor->Implements<UGrabbableInterface>())
+				GrabObject(&HitData);
+		}
 
-			break;
+		break;
 	}
 }
 
 bool ADCharacter::CanGrab(AActor* hitActor)
 {
-    // Location the PC is focused on
-    const FVector Start = GetActorLocation();
-    // The vector points to the ground below the PC
-    const FVector End = Start + GetActorUpVector() * -1 * GrabDistance;
-    
-    // Trace data is stored here
-    FHitResult HitData(ForceInit);
-    
-    if (UDStaticLibrary::Trace(this, Start, End, HitData))
-    {
-        
-        AActor* groundActor = HitData.GetActor();
-        if (hitActor == groundActor)
-        {
-            // The PC is trying to grab the grabbable it is sitting on
-            return false;
-        }
-        else
-        {
-            // The PC can grab the object: they are not sitting on it
-            return true;
-        }
-        
-    }
-    else
-    {
-        // The PC is not touching the ground -> can not grab objects
-        return false;
-    }
-    
+	// Location the PC is focused on
+	const FVector Start = GetActorLocation();
+	// The vector points to the ground below the PC
+	const FVector End = Start + GetActorUpVector() * -1 * GrabDistance;
+
+	// Trace data is stored here
+	FHitResult HitData(ForceInit);
+
+	if (UDStaticLibrary::Trace(this, Start, End, HitData))
+	{
+
+		AActor* groundActor = HitData.GetActor();
+		if (hitActor == groundActor)
+		{
+			// The PC is trying to grab the grabbable it is sitting on
+			return false;
+		}
+		else
+		{
+			// The PC can grab the object: they are not sitting on it
+			return true;
+		}
+
+	}
+	else
+	{
+		// The PC is not touching the ground -> can not grab objects
+		return false;
+	}
+
 }
 
 void ADCharacter::GrabObject(FHitResult* hitData)
 {
-    // The PC is trying to grab a Grabbable actor which cannot be grabbed
+	// The PC is trying to grab a Grabbable actor which cannot be grabbed
 	if (CanGrab((AActor*)&(hitData->Actor)) == false)
-    {
-        return;
-    }
+	{
+		return;
+	}
 
 	InteractState = ObjectInteractionState::OBJECT;
 
@@ -211,7 +211,7 @@ void ADCharacter::GrabObject(FHitResult* hitData)
 
 	AActor* hitActor = hitData->GetActor();
 
-	if (hitActor->IsA(ACube::StaticClass())) 
+	if (hitActor->IsA(ACube::StaticClass()))
 	{
 		UDStaticLibrary::Print("It's a cube!");
 		CubeColor = Cast<ACube>(hitActor)->GetColor();
@@ -229,7 +229,7 @@ void ADCharacter::DropObject()
 	// According to specification, dropped objects should be pushed slightly forward
 	FVector forceVector = GetControlRotation().Vector() * DropImpulseMultiplier;
 	GrabbedObject->AddForce(forceVector);
-	
+
 	CubeColor = DTypes::DCOLOR::NONE;
 
 	InteractState = ObjectInteractionState::NONE;
@@ -238,17 +238,17 @@ void ADCharacter::DropObject()
 void ADCharacter::Run()
 {
 	// Smooth interpolation to faster run speed
-	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
-															SprintSpeed, GetWorld()->GetDeltaSeconds(), 
-															RunWalkInterpSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed,
+		SprintSpeed, GetWorld()->GetDeltaSeconds(),
+		RunWalkInterpSpeed);
 }
 
 void ADCharacter::StopRunning()
 {
 	// Smooth interpolation to slower walk speed
-	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed, 
-															WalkSpeed, GetWorld()->GetDeltaSeconds(), 
-															RunWalkInterpSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(GetCharacterMovement()->MaxWalkSpeed,
+		WalkSpeed, GetWorld()->GetDeltaSeconds(),
+		RunWalkInterpSpeed);
 }
 
 void ADCharacter::OnFire()
@@ -257,7 +257,7 @@ void ADCharacter::OnFire()
 	if (!CanShoot || InteractState == ObjectInteractionState::OBJECT) return;
 
 	// If character was not holding any object, he can pick his gun again
-	else if (InteractState == ObjectInteractionState::NONE) 
+	else if (InteractState == ObjectInteractionState::NONE)
 	{
 		InteractState = ObjectInteractionState::GUN;
 		Mesh1P->SetVisibility(true);
@@ -268,7 +268,7 @@ void ADCharacter::OnFire()
 	// Start timer for gun cooldown
 	CanShoot = false;
 	GetWorldTimerManager().SetTimer(this, &ADCharacter::EnableFiring, GunTimeout);
-	
+
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
 	{
@@ -277,7 +277,7 @@ void ADCharacter::OnFire()
 		const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
 
 		UWorld* const World = GetWorld();
-		
+
 		// spawn the projectile at the muzzle
 		if (World) World->SpawnActor<ADProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 	}
@@ -298,7 +298,7 @@ void ADCharacter::OnFire()
 void ADCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == true) return;
-	
+
 	TouchItem.bIsPressed = true;
 	TouchItem.FingerIndex = FingerIndex;
 	TouchItem.Location = Location;
