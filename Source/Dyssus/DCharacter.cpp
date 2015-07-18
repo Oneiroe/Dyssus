@@ -55,20 +55,6 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	// Edit Character's default jump settings to handle air control and editable jump speed
 	CharacterMovement->AirControl = AirControl;
 	CharacterMovement->JumpZVelocity = JumpSpeed;
-
-	LinearDamping = 10000.f;
-	LinearStiffness = 10000.f;
-	AngularDamping = 10000.f;
-	AngularStiffness = 10000.f;
-	InterpolationSpeed = 10000.f;
-
-	// How object should behave once grabbed
-	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
-	PhysicsHandle->LinearDamping = LinearDamping;
-	PhysicsHandle->LinearStiffness = LinearStiffness;
-	PhysicsHandle->AngularDamping = AngularDamping;
-	PhysicsHandle->AngularStiffness = AngularStiffness;
-	PhysicsHandle->InterpolationSpeed = InterpolationSpeed;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,29 +190,15 @@ void ADCharacter::GrabObject(FHitResult* hitData)
 	GrabbedObject = hitData->GetActor();
 	GrabbedObject->SetActorRotation(GetControlRotation());
 
-	if (GrabbedObject->IsA(ACube::StaticClass()) && Cast<ACube>(GrabbedObject)->CanBeDestroyed)
-	{
-		ACube* cube = Cast<ACube>(GrabbedObject);
-
-		IsHoldingDM = true;
-		cube->CanBeDestroyed = false;
-		cube->SetCubeMesh();
-	}
-	((UStaticMeshComponent*)GrabbedObject->GetComponentByClass(UStaticMeshComponent::StaticClass()))->SetSimulatePhysics(false);
+	((UStaticMeshComponent*)GrabbedObject->GetRootComponent())->SetSimulatePhysics(false);
 }
 
 void ADCharacter::DropObject()
 {
 	// According to specification, dropped objects should be pushed slightly forward
 	FVector forceVector = GetControlRotation().Vector() * DropImpulseMultiplier;
-	((UStaticMeshComponent*)GrabbedObject->GetComponentByClass(UStaticMeshComponent::StaticClass()))->SetSimulatePhysics(true);
-	((UStaticMeshComponent*)GrabbedObject->GetComponentByClass(UStaticMeshComponent::StaticClass()))->AddForce(forceVector);
-
-	if (IsHoldingDM)
-	{
-		IsHoldingDM = false;
-		Cast<ACube>(GrabbedObject)->CanBeDestroyed = true;
-	}
+	((UStaticMeshComponent*)GrabbedObject->GetRootComponent())->SetSimulatePhysics(true);
+	((UStaticMeshComponent*)GrabbedObject->GetRootComponent())->AddForce(forceVector);
 
 	InteractState = ObjectInteractionState::NONE;
 }

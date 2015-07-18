@@ -18,8 +18,6 @@ class ADCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
-	bool IsHoldingDM;
-
 public:
 	ADCharacter(const FObjectInitializer& ObjectInitializer);
 
@@ -96,21 +94,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
     float AirControl;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
-	float LinearDamping;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
-	float LinearStiffness;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
-	float AngularDamping;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
-	float AngularStiffness;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
-	float InterpolationSpeed;
-
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
 
@@ -121,10 +104,6 @@ public:
 	void DropObject();
 
 protected:
-
-	/** Neat way for handling object dragging */
-	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
-	UPhysicsHandleComponent* PhysicsHandle;
 
 	/** Whether player can shoot a projectile */
 	bool CanShoot;

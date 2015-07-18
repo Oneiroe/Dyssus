@@ -16,6 +16,8 @@ class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGr
 
 private:
 
+	bool HasDM;
+
 	class USceneComponent* SceneComponent;
 
 	UMaterial* Material;
@@ -54,8 +56,6 @@ private:
 
 	// Respawns the cube with the property set on construction
 	void RespawnCube();
-
-	void EraseCube();
 
 public:
 
@@ -98,11 +98,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
 	bool CanBeDestroyed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh)
-	class UPrimitiveComponent* CubeMesh;
+	class UStaticMeshComponent* StaticMesh;
 
-	UFUNCTION(BlueprintCallable, Category = Gameplay)
-	void SetCubeMesh();
+	class UDestructibleComponent* DestructibleMesh;
 
 	// Sets default values for this actor's properties
 	ACube();

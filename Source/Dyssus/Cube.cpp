@@ -7,22 +7,46 @@
 
 ACube::ACube()
 {
-	CanBeDestroyed = false;
-
 	BaseDamage = 100.f;
 	DamageRadius = 20.f;
 	ImpulseStrength = 15.f;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	SetRootComponent(SceneComponent);
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	SetRootComponent(StaticMesh);
+
+	SetColor(DColor);
 
 	Timeout = 2.f;
+
+	HasDM = false;
 }
 
 void ACube::OnConstruction(const FTransform& Transform)
 {
-	if (CanBeDestroyed) SetCubeMesh();
-	else SetCubeMesh();
+	if (HasDM)
+	{
+		if (StaticMesh)
+		{
+			StaticMesh->UnregisterComponent();
+			StaticMesh->DestroyComponent();
+		}
+
+		DestructibleMesh = ConstructObject<UDestructibleComponent>(UDestructibleComponent::StaticClass(), this, TEXT("DestructibleMesh"));
+
+		DestructibleMesh->OnComponentCreated();
+		if (DestructibleMesh->bWantsInitializeComponent) DestructibleMesh->InitializeComponent();
+		DestructibleMesh->RegisterComponent();
+
+		DestructibleMesh->SetWorldTransform(Transform);
+
+		SetRootComponent(DestructibleMesh);
+		
+		DestructibleMesh->SetDestructibleMesh(DMesh);
+		SetColor(DColor);
+
+		SetLifeSpan(Timeout);
+	}
+	else StaticMesh->SetStaticMesh(SMesh);
 }
 
 // Called when the game starts or when spawned
@@ -67,14 +91,21 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 {
 	if (!CanBeDestroyed) return;
 
-	if (!GetComponentByClass(UDestructibleComponent::StaticClass())) 
-	{
-		FTransform compTransform = CubeMesh->GetComponentTransform();
-		RootComponent->SetWorldTransform(compTransform);
-		SetCubeMesh();
-	}
+	const FVector newLocation = GetActorLocation();
+	const FRotator newRotation = GetActorRotation();
+	const FTransform newTransform = GetTransform();
+
+	ACube* cube = GetWorld()->SpawnActorDeferred<ACube>(ACube::StaticClass(), newLocation, newRotation);
 	
-	Cast<UDestructibleComponent>(CubeMesh)->ApplyRadiusDamage(BaseDamage, HitLocation, DamageRadius, ImpulseStrength, false);
+	cube->HasDM = true;
+	cube->SMesh = SMesh;
+	cube->DMesh = DMesh;
+	cube->BaseDamage = BaseDamage;
+	cube->DamageRadius = DamageRadius;
+	cube->ImpulseStrength = ImpulseStrength;
+	
+	cube->FinishSpawning(newTransform);
+	cube->DestructibleMesh->ApplyRadiusDamage(BaseDamage, HitLocation, DamageRadius, ImpulseStrength, false);
 
 	if (!UseStartingTransformOnRespawn)
 	{
@@ -82,15 +113,19 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		RespawnRotation = RootComponent->GetComponentRotation();
 	}
 
+	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	StaticMesh->SetVisibility(false);
+
 	if(Respawnable) GetWorldTimerManager().SetTimer(this, &ACube::RespawnCube, Timeout);
-	else GetWorldTimerManager().SetTimer(this, &ACube::EraseCube, Timeout);
+	else Destroy();
 }
 
 
 void ACube::RespawnCube()
 {
-	ACube::OnConstruction(FTransform::Identity);
-	
+	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	StaticMesh->SetVisibility(true);
+
 	SetActorLocation(RespawnLocation);
 	SetActorRotation(RespawnRotation);
 }
@@ -99,51 +134,15 @@ void ACube::SetColor(DTypes::DCOLOR dColor)
 {
 	DColor = dColor;
 
-	if (CubeMesh && CubeMaterials.Num() > DColor)
+	if (CubeMaterials.Num() > DColor)
 	{
 		Material = CubeMaterials[DColor];
-		CubeMesh->SetMaterial(0, Material);
+		if(HasDM) DestructibleMesh->SetMaterial(0, Material);
+		else StaticMesh->SetMaterial(0, Material);
 	}
 }
 
 DTypes::DCOLOR ACube::GetColor()
 {
 	return DColor;
-}
-
-void ACube::EraseCube()
-{
-	Destroy();
-}
-
-void ACube::SetCubeMesh()
-{
-	if (CubeMesh)
-	{
-		CubeMesh->UnregisterComponent();
-		CubeMesh->DestroyComponent();
-	}
-
-	if (CanBeDestroyed)
-	{
-		CubeMesh = ConstructObject<UDestructibleComponent>(UDestructibleComponent::StaticClass(), this, TEXT("DestructibleMesh"));
-		Cast<UDestructibleComponent>(CubeMesh)->SetDestructibleMesh(DMesh);
-	}
-	else
-	{
-		CubeMesh = ConstructObject<UStaticMeshComponent>(UStaticMeshComponent::StaticClass(), this, TEXT("StaticMesh"));
-		Cast<UStaticMeshComponent>(CubeMesh)->SetStaticMesh(SMesh);
-	}
-
-	CubeMesh->OnComponentCreated();
-	if (CubeMesh->bWantsInitializeComponent) CubeMesh->InitializeComponent();
-	CubeMesh->RegisterComponent();
-
-	CubeMesh->bGenerateOverlapEvents = true;
-
-	CubeMesh->SetRelativeLocation(FVector::ZeroVector);
-	CubeMesh->SetRelativeRotation(FRotator::ZeroRotator);
-	CubeMesh->AttachTo(RootComponent);
-
-	SetColor(DColor);
 }
