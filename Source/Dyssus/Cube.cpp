@@ -15,6 +15,8 @@ ACube::ACube()
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	SetRootComponent(SceneComponent);
+
+	Timeout = 2.f;
 }
 
 void ACube::OnConstruction(const FTransform& Transform)
@@ -92,10 +94,9 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 	if (!CanBeDestroyed) return;
 
 	Cast<UDestructibleComponent>(CubeMesh)->ApplyRadiusDamage(BaseDamage, HitLocation, DamageRadius, ImpulseStrength, false);
-	this->SetActorEnableCollision(false);
-	Cast<UDestructibleComponent>(CubeMesh)->SetCollisionProfileName(TEXT("OverlapAll"));
 
-	GetWorldTimerManager().SetTimer(this, &ACube::RespawnCube, 2.0f);
+	if(Respawnable) GetWorldTimerManager().SetTimer(this, &ACube::RespawnCube, Timeout);
+	else GetWorldTimerManager().SetTimer(this, &ACube::EraseCube, Timeout);
 }
 
 
@@ -123,4 +124,9 @@ void ACube::SetColor(DTypes::DCOLOR dColor)
 DTypes::DCOLOR ACube::GetColor()
 {
 	return DColor;
+}
+
+void ACube::EraseCube()
+{
+	Destroy();
 }

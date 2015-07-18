@@ -49,8 +49,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool UseStartingTransformOnRespawn;
 
+	// Respawn/Destroy timeout
+	UPROPERTY(EditAnywhere)
+	float Timeout;
+
 	// Respawns the cube with the property set on construction
 	void RespawnCube();
+
+	void EraseCube();
 
 public:
 
