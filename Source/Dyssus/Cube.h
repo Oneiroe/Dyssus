@@ -16,6 +16,8 @@ class DYSSUS_API ACube : public AActor, public IDestroyableInterface, public IGr
 
 private:
 
+	class USceneComponent* SceneComponent;
+
 	UMaterial* Material;
 
 	UPROPERTY(EditAnywhere)
@@ -41,9 +43,6 @@ private:
 	// Default color on respawn?
 	UPROPERTY(EditAnywhere)
 	bool MaintainColorOnRespawn;
-
-	UPROPERTY(EditAnywhere)
-	bool CanBeDestroyed;
 
 	// Define if the cube will be respawned at his starting location or at the respawn one
 	UPROPERTY(EditAnywhere)
@@ -84,9 +83,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Colors)
 	virtual void SetColor(DTypes::DCOLOR dColor_) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class USceneComponent* SceneComponent;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TArray<UMaterial*> CubeMaterials;
 
@@ -99,8 +95,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
 	float ImpulseStrength;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
+	bool CanBeDestroyed;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh)
 	class UPrimitiveComponent* CubeMesh;
+
+	UFUNCTION(BlueprintCallable, Category = Gameplay)
+	void SetCubeMesh();
 
 	// Sets default values for this actor's properties
 	ACube();

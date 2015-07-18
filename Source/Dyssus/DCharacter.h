@@ -18,6 +18,8 @@ class ADCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
+	bool IsHoldingDM;
+
 public:
 	ADCharacter(const FObjectInitializer& ObjectInitializer);
 
@@ -113,13 +115,10 @@ public:
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
 
 	/** Reference to the object grabbed by the player */
-	UPrimitiveComponent* GrabbedObject;
+	AActor* GrabbedObject;
 
 	/** Force character to drop object */
 	void DropObject();
-
-	/** Color of the held cube, if any */
-	DTypes::DCOLOR CubeColor;
 
 protected:
 

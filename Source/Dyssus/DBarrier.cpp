@@ -62,7 +62,7 @@ class UPrimitiveComponent* OtherComp,
 	if (OtherActor->IsA(ADCharacter::StaticClass()))
 	{
 		ADCharacter* character = Cast<ADCharacter>(OtherActor);
-		UPrimitiveComponent* grabbedObj = character->GrabbedObject;
+		UPrimitiveComponent* grabbedObj = (UPrimitiveComponent*)character->GrabbedObject->GetRootComponent();
 
 		if (character->GrabbedObject && UColorableFactory::CompareColors(this, Cast<AActor>(grabbedObj)))
 			character->DropObject();

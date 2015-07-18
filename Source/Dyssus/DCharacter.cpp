@@ -69,8 +69,6 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	PhysicsHandle->AngularDamping = AngularDamping;
 	PhysicsHandle->AngularStiffness = AngularStiffness;
 	PhysicsHandle->InterpolationSpeed = InterpolationSpeed;
-
-	CubeColor = DTypes::DCOLOR::NONE;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -120,7 +118,7 @@ void ADCharacter::CarryObject()
 		FirstPersonCameraComponent->GetRightVector() * ArmOffsetH +
 		FirstPersonCameraComponent->GetUpVector() * ArmOffsetV;
 
-	PhysicsHandle->SetTargetLocationAndRotation(newLocation, GetControlRotation());
+	GrabbedObject->GetRootComponent()->SetWorldLocationAndRotation(newLocation, GetControlRotation());
 }
 
 void ADCharacter::GrabDropObject()
@@ -199,38 +197,36 @@ bool ADCharacter::CanGrab(AActor* hitActor)
 void ADCharacter::GrabObject(FHitResult* hitData)
 {
 	// The PC is trying to grab a Grabbable actor which cannot be grabbed
-	if (CanGrab((AActor*)&(hitData->Actor)) == false)
-	{
-		return;
-	}
+	if (CanGrab((AActor*)&(hitData->Actor)) == false) return;
 
 	InteractState = ObjectInteractionState::OBJECT;
 
-	GrabbedObject = hitData->GetComponent();
-	GrabbedObject->SetWorldRotation(GetControlRotation());
+	GrabbedObject = hitData->GetActor();
+	GrabbedObject->SetActorRotation(GetControlRotation());
 
-	AActor* hitActor = hitData->GetActor();
-
-	if (hitActor->IsA(ACube::StaticClass()))
+	if (GrabbedObject->IsA(ACube::StaticClass()) && Cast<ACube>(GrabbedObject)->CanBeDestroyed)
 	{
-		UDStaticLibrary::Print("It's a cube!");
-		CubeColor = Cast<ACube>(hitActor)->GetColor();
-	}
+		ACube* cube = Cast<ACube>(GrabbedObject);
 
-	// Attach grabbable to character
-	PhysicsHandle->GrabComponent(GrabbedObject, hitData->BoneName, hitData->Location, true);
+		IsHoldingDM = true;
+		cube->CanBeDestroyed = false;
+		cube->SetCubeMesh();
+	}
+	((UStaticMeshComponent*)GrabbedObject->GetComponentByClass(UStaticMeshComponent::StaticClass()))->SetSimulatePhysics(false);
 }
 
 void ADCharacter::DropObject()
 {
-	// Drop grabbable
-	PhysicsHandle->ReleaseComponent();
-
 	// According to specification, dropped objects should be pushed slightly forward
 	FVector forceVector = GetControlRotation().Vector() * DropImpulseMultiplier;
-	GrabbedObject->AddForce(forceVector);
+	((UStaticMeshComponent*)GrabbedObject->GetComponentByClass(UStaticMeshComponent::StaticClass()))->SetSimulatePhysics(true);
+	((UStaticMeshComponent*)GrabbedObject->GetComponentByClass(UStaticMeshComponent::StaticClass()))->AddForce(forceVector);
 
-	CubeColor = DTypes::DCOLOR::NONE;
+	if (IsHoldingDM)
+	{
+		IsHoldingDM = false;
+		Cast<ACube>(GrabbedObject)->CanBeDestroyed = true;
+	}
 
 	InteractState = ObjectInteractionState::NONE;
 }
