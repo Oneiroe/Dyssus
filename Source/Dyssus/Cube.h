@@ -18,8 +18,6 @@ private:
 
 	bool HasDM;
 
-	class USceneComponent* SceneComponent;
-
 	UMaterial* Material;
 
 	UPROPERTY(EditAnywhere)

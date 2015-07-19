@@ -7,46 +7,47 @@
 
 ACube::ACube()
 {
+	// Parameters driving cube explosion -- we may consider tune these depending on projectile speed
 	BaseDamage = 100.f;
 	DamageRadius = 20.f;
 	ImpulseStrength = 15.f;
 
-	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	SetRootComponent(StaticMesh);
-
-	SetColor(DColor);
-
+	// Respawn timeout
 	Timeout = 2.f;
 
+	// Whether or not this cube has a Destructible Mesh Component
 	HasDM = false;
 }
 
 void ACube::OnConstruction(const FTransform& Transform)
 {
-	if (HasDM)
+	// Initialize component with Destructible Mesh as root
+	if (HasDM && !DestructibleMesh)
 	{
-		if (StaticMesh)
-		{
-			StaticMesh->UnregisterComponent();
-			StaticMesh->DestroyComponent();
-		}
-
 		DestructibleMesh = ConstructObject<UDestructibleComponent>(UDestructibleComponent::StaticClass(), this, TEXT("DestructibleMesh"));
-
 		DestructibleMesh->OnComponentCreated();
 		if (DestructibleMesh->bWantsInitializeComponent) DestructibleMesh->InitializeComponent();
 		DestructibleMesh->RegisterComponent();
-
-		DestructibleMesh->SetWorldTransform(Transform);
-
 		SetRootComponent(DestructibleMesh);
-		
+		DestructibleMesh->SetWorldTransform(Transform);
 		DestructibleMesh->SetDestructibleMesh(DMesh);
-		SetColor(DColor);
 
 		SetLifeSpan(Timeout);
 	}
-	else StaticMesh->SetStaticMesh(SMesh);
+	// Or with Static Mesh
+	else if (!StaticMesh)
+	{
+		StaticMesh = ConstructObject<UStaticMeshComponent>(UStaticMeshComponent::StaticClass(), this, TEXT("StaticMesh"));
+		StaticMesh->OnComponentCreated();
+		if (StaticMesh->bWantsInitializeComponent) StaticMesh->InitializeComponent();
+		StaticMesh->RegisterComponent();
+		SetRootComponent(StaticMesh);
+		StaticMesh->SetWorldTransform(Transform);
+		StaticMesh->SetStaticMesh(SMesh);
+	}
+
+	// Paint cube
+	SetColor(DColor);
 }
 
 // Called when the game starts or when spawned
@@ -57,6 +58,7 @@ void ACube::BeginPlay()
 	StartingLocation = RootComponent->GetComponentTransform().GetLocation();
 	StartingRotation = RootComponent->GetComponentTransform().GetRotation().Rotator();
 
+	// Save transform if this cube is to respawn in the start location
 	if (UseStartingTransformOnRespawn == true)
 	{
 		RespawnLocation = StartingLocation;
@@ -97,6 +99,7 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 
 	ACube* cube = GetWorld()->SpawnActorDeferred<ACube>(ACube::StaticClass(), newLocation, newRotation);
 	
+	// This cube will be spawned just to show explosion effect, with lifespan = Timeout
 	cube->HasDM = true;
 	cube->SMesh = SMesh;
 	cube->DMesh = DMesh;
@@ -113,18 +116,20 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 		RespawnRotation = RootComponent->GetComponentRotation();
 	}
 
-	StaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	StaticMesh->SetVisibility(false);
+	// Cube is invisible until is to be respawned
+	Cast<UPrimitiveComponent>(RootComponent)->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Cast<UPrimitiveComponent>(RootComponent)->SetVisibility(false);
 
+	// 'Respawn' after Timeout if Respawnable
 	if(Respawnable) GetWorldTimerManager().SetTimer(this, &ACube::RespawnCube, Timeout);
 	else Destroy();
 }
 
-
 void ACube::RespawnCube()
 {
-	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	StaticMesh->SetVisibility(true);
+	// Revert Collision and Visibility parameters on respawn
+	Cast<UPrimitiveComponent>(RootComponent)->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Cast<UPrimitiveComponent>(RootComponent)->SetVisibility(true);
 
 	SetActorLocation(RespawnLocation);
 	SetActorRotation(RespawnRotation);
@@ -137,8 +142,7 @@ void ACube::SetColor(DTypes::DCOLOR dColor)
 	if (CubeMaterials.Num() > DColor)
 	{
 		Material = CubeMaterials[DColor];
-		if(HasDM) DestructibleMesh->SetMaterial(0, Material);
-		else StaticMesh->SetMaterial(0, Material);
+		Cast<UPrimitiveComponent>(RootComponent)->SetMaterial(0, Material);
 	}
 }
 
