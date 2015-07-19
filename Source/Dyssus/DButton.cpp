@@ -88,8 +88,6 @@ class UPrimitiveComponent* OtherComp,
 
 			if (OnReleaseSound) PlaySoundAtLocation(OnReleaseSound, GetActorLocation());
 
-			// Needed for generating overlapping events
-			SphereComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 		}
 	}
 }

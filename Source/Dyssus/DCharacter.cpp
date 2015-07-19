@@ -46,7 +46,7 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	InteractState = ObjectInteractionState::GUN;
 
 	GrabDistance = 2000.f;
-	ArmLength = 250.f;
+	ArmLength = 280.f;
 	DropImpulseMultiplier = 500000.f;
 
 	AirControl = .5f;
@@ -55,6 +55,20 @@ ADCharacter::ADCharacter(const FObjectInitializer& ObjectInitializer)
 	// Edit Character's default jump settings to handle air control and editable jump speed
 	CharacterMovement->AirControl = AirControl;
 	CharacterMovement->JumpZVelocity = JumpSpeed;
+
+	LinearDamping = 100000.f;
+	LinearStiffness = 100000.f;
+	AngularDamping = 100000.f;
+	AngularStiffness = 100000.f;
+	InterpolationSpeed = 100000.f;
+
+	// How object should behave once grabbed
+	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+	PhysicsHandle->LinearDamping = LinearDamping;
+	PhysicsHandle->LinearStiffness = LinearStiffness;
+	PhysicsHandle->AngularDamping = AngularDamping;
+	PhysicsHandle->AngularStiffness = AngularStiffness;
+	PhysicsHandle->InterpolationSpeed = InterpolationSpeed;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,7 +118,7 @@ void ADCharacter::CarryObject()
 		FirstPersonCameraComponent->GetRightVector() * ArmOffsetH +
 		FirstPersonCameraComponent->GetUpVector() * ArmOffsetV;
 
-	GrabbedObject->GetRootComponent()->SetWorldLocationAndRotation(newLocation, GetControlRotation());
+	PhysicsHandle->SetTargetLocationAndRotation(newLocation, GetControlRotation());
 }
 
 void ADCharacter::GrabDropObject()
@@ -187,18 +201,21 @@ void ADCharacter::GrabObject(FHitResult* hitData)
 
 	InteractState = ObjectInteractionState::OBJECT;
 
-	GrabbedObject = hitData->GetActor();
-	GrabbedObject->SetActorRotation(GetControlRotation());
+	GrabbedObject = hitData->GetComponent();
+	GrabbedObject->SetWorldRotation(GetControlRotation());
 
-	((UStaticMeshComponent*)GrabbedObject->GetRootComponent())->SetSimulatePhysics(false);
+	// Attach grabbable to character
+	PhysicsHandle->GrabComponent(GrabbedObject, hitData->BoneName, hitData->Location, true);
 }
 
 void ADCharacter::DropObject()
 {
+	// Drop grabbable
+	PhysicsHandle->ReleaseComponent();
+
 	// According to specification, dropped objects should be pushed slightly forward
 	FVector forceVector = GetControlRotation().Vector() * DropImpulseMultiplier;
-	((UStaticMeshComponent*)GrabbedObject->GetRootComponent())->SetSimulatePhysics(true);
-	((UStaticMeshComponent*)GrabbedObject->GetRootComponent())->AddForce(forceVector);
+	GrabbedObject->AddForce(forceVector);
 
 	InteractState = ObjectInteractionState::NONE;
 }

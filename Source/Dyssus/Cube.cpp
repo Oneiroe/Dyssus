@@ -12,6 +12,8 @@ ACube::ACube()
 	DamageRadius = 20.f;
 	ImpulseStrength = 15.f;
 
+	DColor = DDefaultColor;
+
 	// Respawn timeout
 	Timeout = 2.f;
 
@@ -106,6 +108,7 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 	cube->BaseDamage = BaseDamage;
 	cube->DamageRadius = DamageRadius;
 	cube->ImpulseStrength = ImpulseStrength;
+	cube->DColor = DColor;
 	
 	cube->FinishSpawning(newTransform);
 	cube->DestructibleMesh->ApplyRadiusDamage(BaseDamage, HitLocation, DamageRadius, ImpulseStrength, false);
@@ -117,8 +120,10 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 	}
 
 	// Cube is invisible until is to be respawned
-	Cast<UPrimitiveComponent>(RootComponent)->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Cast<UPrimitiveComponent>(RootComponent)->SetVisibility(false);
+	UPrimitiveComponent* root = Cast<UPrimitiveComponent>(RootComponent);
+	root->SetSimulatePhysics(false);
+	root->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	root->SetVisibility(false);
 
 	// 'Respawn' after Timeout if Respawnable
 	if(Respawnable) GetWorldTimerManager().SetTimer(this, &ACube::RespawnCube, Timeout);
@@ -128,8 +133,12 @@ void ACube::InterfacedDestroy(FVector HitLocation, FVector NormalImpulse)
 void ACube::RespawnCube()
 {
 	// Revert Collision and Visibility parameters on respawn
-	Cast<UPrimitiveComponent>(RootComponent)->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	Cast<UPrimitiveComponent>(RootComponent)->SetVisibility(true);
+	UPrimitiveComponent* root = Cast<UPrimitiveComponent>(RootComponent);
+	root->SetSimulatePhysics(true);
+	root->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	root->SetVisibility(true);
+
+	if (!MaintainColorOnRespawn) SetColor(DDefaultColor);
 
 	SetActorLocation(RespawnLocation);
 	SetActorRotation(RespawnRotation);
@@ -137,6 +146,8 @@ void ACube::RespawnCube()
 
 void ACube::SetColor(DTypes::DCOLOR dColor)
 {
+	if (!CanChangeColor) return;
+
 	DColor = dColor;
 
 	if (CubeMaterials.Num() > DColor)

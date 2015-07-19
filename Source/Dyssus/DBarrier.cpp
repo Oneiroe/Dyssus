@@ -44,6 +44,13 @@ void ADBarrier::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Reset Collision Profile Name to "Barrier_OverlapAll" in order to generate overlap events -- possible performance bug
+	if (IsCrossable && BoxComponent->GetCollisionProfileName() != "Barrier_OverlapAll")
+	{
+		TArray<AActor*> overlappingActors;
+		BoxComponent->GetOverlappingActors(overlappingActors);
+		if (overlappingActors.Num() == 0) BoxComponent->SetCollisionProfileName("Barrier_OverlapAll");
+	}
 }
 
 void ADBarrier::OnConstruction(const FTransform& Transform)
@@ -59,10 +66,12 @@ class UPrimitiveComponent* OtherComp,
 	bool bFromSweep,
 	const FHitResult &SweepResult)
 {
+	if (!IsActivated) return;
+
 	if (OtherActor->IsA(ADCharacter::StaticClass()))
 	{
 		ADCharacter* character = Cast<ADCharacter>(OtherActor);
-		UPrimitiveComponent* grabbedObj = (UPrimitiveComponent*)character->GrabbedObject->GetRootComponent();
+		UPrimitiveComponent* grabbedObj = (UPrimitiveComponent*)character->GrabbedObject;
 
 		if (character->GrabbedObject && UColorableFactory::CompareColors(this, Cast<AActor>(grabbedObj)))
 			character->DropObject();
@@ -71,32 +80,27 @@ class UPrimitiveComponent* OtherComp,
 	{
 		ACube* cube = Cast<ACube>(OtherActor);
 
-		// Setting collision to 'Collision Enabled' stops cube but not character
 		if (UColorableFactory::CompareColors(this, cube))
-			BoxComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+			BoxComponent->SetCollisionProfileName("Barrier_OverlapAll");
 		else
-			BoxComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+			BoxComponent->SetCollisionProfileName("Barrier_BlockCube");
 	}
 
 	if (OverlapSound) UGameplayStatics::PlaySoundAtLocation(this, OverlapSound, GetActorLocation());
 }
 
 void ADBarrier::OnEndOverlap(class AActor * OtherActor,
-class UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex)
+							class UPrimitiveComponent* OtherComp,
+							int32 OtherBodyIndex)
 {
-	// Needed for generating overlapping events
-	BoxComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	// Remaining overlapping actors check should go here, but it caused a stack overflow
 }
 
 // Whenever IsCrossable is changed, Pawn channel response changes too
 void ADBarrier::SetCrossable(bool newCrossable)
 {
-	if (newCrossable != IsCrossable)
-	{
-		if (newCrossable) BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-		else BoxComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
-	}
+	if (newCrossable) BoxComponent->SetCollisionProfileName("Barrier_OverlapAll");
+	else BoxComponent->SetCollisionProfileName("BlockAll");
 
 	IsCrossable = newCrossable;
 }
@@ -115,14 +119,4 @@ void ADBarrier::SetColor(DTypes::DCOLOR dColor)
 DTypes::DCOLOR ADBarrier::GetColor()
 {
 	return DColor;
-}
-
-void ADBarrier::Activate()
-{
-	// TODO
-}
-
-void ADBarrier::Deactivate()
-{
-	// TODO
 }

@@ -78,10 +78,4 @@ public:
 	void OnEndOverlap(class AActor * OtherActor,
 					class UPrimitiveComponent* OtherComp,
 					int32 OtherBodyIndex);
-
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-	void Activate();
-
-	UFUNCTION(BlueprintCallable, Category = "Gameplay")
-	void Deactivate();
 };

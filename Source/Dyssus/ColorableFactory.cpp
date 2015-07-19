@@ -14,6 +14,6 @@ bool UColorableFactory::CompareColors(AActor* a, AActor* b)
 
 	if (!aa || !bb) return false;
 
-	return aa->GetColor() && bb->GetColor();
+	return aa->GetColor() == bb->GetColor();
 }
 

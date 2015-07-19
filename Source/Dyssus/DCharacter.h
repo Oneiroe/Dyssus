@@ -97,13 +97,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float LinearDamping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float LinearStiffness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float AngularDamping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float AngularStiffness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
+	float InterpolationSpeed;
+
 	/** Reference to the object grabbed by the player */
-	AActor* GrabbedObject;
+	UPrimitiveComponent* GrabbedObject;
 
 	/** Force character to drop object */
 	void DropObject();
 
 protected:
+
+	/** Neat way for handling object dragging */
+	UPROPERTY(VisibleDefaultsOnly, Category = Gameplay)
+	UPhysicsHandleComponent* PhysicsHandle;
 
 	/** Whether player can shoot a projectile */
 	bool CanShoot;
