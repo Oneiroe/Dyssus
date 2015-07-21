@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Dyssus.h"
+#include "DCharacter.h"
 #include "DGate.h"
 
 
@@ -15,12 +16,21 @@ ADGate::ADGate()
 	Mesh2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent2"));
 
 	SetRootComponent(BoxTrigger);
+	
 	Mesh1->AttachTo(RootComponent);
+	Mesh1->SetRelativeRotation(FRotator(0, 0, 90));
+	
 	Mesh2->AttachTo(RootComponent);
+	Mesh2->SetRelativeRotation(FRotator(0, 0, -90));
 
-	SetState(true);
+	SetState(false);
 
 	InterpSpeed = 100.f;
+
+	BoxTrigger->OnComponentBeginOverlap.AddDynamic(this, &ADGate::OnBeginOverlap);
+	BoxTrigger->OnComponentEndOverlap.AddDynamic(this, &ADGate::OnEndOverlap);
+
+	OpenOnProximity = true;
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +76,7 @@ void ADGate::SetState(bool newState, bool snap)
 void ADGate::OpenGate(float DeltaTime)
 {
 	FVector mesh1RL = Mesh1->GetRelativeTransform().GetLocation();
-	FVector mesh2RL = Mesh1->GetRelativeTransform().GetLocation();
+	FVector mesh2RL = Mesh2->GetRelativeTransform().GetLocation();
 
 	float offset1X = FMath::FInterpTo(mesh1RL.X, Mesh1OpenOffset.X, DeltaTime, InterpSpeed);
 	float offset1Y = FMath::FInterpTo(mesh1RL.Y, Mesh1OpenOffset.Y, DeltaTime, InterpSpeed);
@@ -88,7 +98,7 @@ void ADGate::OpenGate(float DeltaTime)
 void ADGate::CloseGate(float DeltaTime)
 {
 	FVector mesh1RL = Mesh1->GetRelativeTransform().GetLocation();
-	FVector mesh2RL = Mesh1->GetRelativeTransform().GetLocation();
+	FVector mesh2RL = Mesh2->GetRelativeTransform().GetLocation();
 
 	float offset1X = FMath::FInterpTo(mesh1RL.X, Mesh1CloseOffset.X, DeltaTime, InterpSpeed);
 	float offset1Y = FMath::FInterpTo(mesh1RL.Y, Mesh1CloseOffset.Y, DeltaTime, InterpSpeed);
@@ -105,4 +115,30 @@ void ADGate::CloseGate(float DeltaTime)
 	FVector mesh2NewRL = FVector(offset2X, offset2Y, offset2Z);
 
 	Mesh2->SetRelativeLocation(mesh2NewRL);
+}
+
+void ADGate::OnBeginOverlap(class AActor* OtherActor,
+							class UPrimitiveComponent* OtherComp,
+							int32 OtherBodyIndex,
+							bool bFromSweep,
+							const FHitResult &SweepResult)
+{
+	if (!OpenOnProximity) return;
+
+	if (OtherActor->IsA(ADCharacter::StaticClass()))
+	{
+		SetState(true);
+	}
+}
+
+void ADGate::OnEndOverlap(class AActor * OtherActor,
+						class UPrimitiveComponent* OtherComp,
+						int32 OtherBodyIndex)
+{
+	if (!OpenOnProximity) return;
+
+	if (OtherActor->IsA(ADCharacter::StaticClass()))
+	{
+		SetState(false);
+	}
 }

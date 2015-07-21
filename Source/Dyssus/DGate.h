@@ -61,4 +61,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float InterpSpeed;
+
+	UFUNCTION(BlueprintCallable, Category = Collision)
+	void OnBeginOverlap(class AActor* OtherActor,
+						class UPrimitiveComponent* OtherComp,
+						int32 OtherBodyIndex,
+						bool bFromSweep,
+						const FHitResult &SweepResult);
+
+	UFUNCTION(BlueprintCallable, Category = Collision)
+	void OnEndOverlap(class AActor * OtherActor,
+					class UPrimitiveComponent* OtherComp,
+					int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	bool OpenOnProximity;
 };
