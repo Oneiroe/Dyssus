@@ -24,6 +24,8 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Mesh)
 	class UBoxComponent* BoxTrigger;
 

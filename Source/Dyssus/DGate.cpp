@@ -39,6 +39,11 @@ void ADGate::Tick( float DeltaTime )
 	else CloseGate(DeltaTime);
 }
 
+void ADGate::OnConstruction(const FTransform& Transform)
+{
+	SetState(IsOpen, true);
+}
+
 void ADGate::SetState(bool newState, bool snap)
 {
 	IsOpen = newState;
