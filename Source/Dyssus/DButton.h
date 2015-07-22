@@ -10,27 +10,6 @@ class DYSSUS_API ADButton : public AActor
 {
 	GENERATED_BODY()
 
-private:
-	int NumOverlappingActors;
-
-	void PressButton(float DeltaTime);
-
-	void ReleaseButton(float DeltaTime);
-
-	float InitialZ;
-
-	// This indicates whether the button is currently pressed (true) or released (false)
-	UPROPERTY(EditAnywhere, Category = State)
-	bool IsPressed;
-
-	// Sound played when the button is released
-	UPROPERTY(EditAnywhere, Category = Sounds)
-	USoundCue* OnReleaseSound;
-
-	// Sound played when the button is pressed
-	UPROPERTY(EditAnywhere, Category = Sounds)
-	USoundCue* OnPressSound;
-
 public:
 	// Sets default values for this actor's properties
 	ADButton();
@@ -88,4 +67,36 @@ public:
 	void OnEndOverlap(class AActor * OtherActor,
 					class UPrimitiveComponent* OtherComp,
 					int32 OtherBodyIndex);
+
+	DECLARE_EVENT(ADButton, ButtonPressedEvent)
+	ButtonPressedEvent& OnButtonPressed() { return buttonPressedEvent; }
+
+	DECLARE_EVENT(ADButton, ButtonReleasedEvent)
+	ButtonReleasedEvent& OnButtonReleased() { return buttonReleasedEvent; }
+
+private:
+
+	ButtonPressedEvent buttonPressedEvent;
+
+	ButtonReleasedEvent buttonReleasedEvent;
+
+	int NumOverlappingActors;
+
+	void PressButton(float DeltaTime);
+
+	void ReleaseButton(float DeltaTime);
+
+	float InitialZ;
+
+	// This indicates whether the button is currently pressed (true) or released (false)
+	UPROPERTY(EditAnywhere, Category = State)
+	bool IsPressed;
+
+	// Sound played when the button is released
+	UPROPERTY(EditAnywhere, Category = Sounds)
+	USoundCue* OnReleaseSound;
+
+	// Sound played when the button is pressed
+	UPROPERTY(EditAnywhere, Category = Sounds)
+	USoundCue* OnPressSound;
 };
