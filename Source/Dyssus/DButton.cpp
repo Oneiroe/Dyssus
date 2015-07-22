@@ -95,6 +95,9 @@ class UPrimitiveComponent* OtherComp,
 void ADButton::SetPressed(bool newPressed)
 {
 	IsPressed = newPressed;
+
+	if (IsPressed) OnButtonPressed();
+	else OnButtonReleased();
 }
 
 bool ADButton::IsButtonPressed()
