@@ -3,6 +3,7 @@
 #include "Dyssus.h"
 #include "CubeColorator.h"
 
+
 ACubeColorator::ACubeColorator()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -17,6 +18,17 @@ void ACubeColorator::OnConstruction(const FTransform& Transform)
 void ACubeColorator::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	for (ADButton* i : InputButtonsActors)
+	{
+		i->OnButtonPressed().AddDynamic(this, &ACubeColorator::OnButtonPressEvent); //  handshacking between the colorator and its buttons
+	}
+}
+
+// Thrown when a button is pressed
+void ACubeColorator::OnButtonPressEvent()
+{
+	UDStaticLibrary::Print(this->GetName()+"> button pressed"); // just a debug print to verify the thrown of the event
 }
 
 // Called every frame
@@ -65,3 +77,4 @@ void ACubeColorator::ReceiveActorBeginOverlap(AActor * OtherActor)
 		if (SoundUsed) UGameplayStatics::PlaySoundAtLocation(this, SoundUsed, GetActorLocation());
 	}
 }
+

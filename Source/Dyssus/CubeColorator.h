@@ -5,6 +5,9 @@
 #include "GameFramework/Actor.h"
 #include "Cube.h"
 #include "DStaticLibrary.h"
+
+#include "DButton.h"
+
 #include "CubeColorator.generated.h"
 
 UENUM()
@@ -79,13 +82,16 @@ private:
 
 	// Actor of which input will be handled
 	UPROPERTY(EditAnywhere)
-	TArray<AActor*> InputActors;
+	TArray<AActor*> InputActors; // DELETION PENDING in favor of more specific InputButtonsActors
 
-	// Input to handle
+	// Buttons of which input will be handled
 	UPROPERTY(EditAnywhere)
-	TArray<FInput> InputToHandle;
+	TArray<ADButton*> InputButtonsActors;
 
 public:	
+	// Thrown when an associated button is pressed
+	UFUNCTION()
+	void OnButtonPressEvent();
 
 	// Sets default values for this actor's properties
 	ACubeColorator();
@@ -118,4 +124,6 @@ public:
 	// Set the colorator to active or not
 	UFUNCTION(BlueprintCallable, category = "Colorator")
 	void SetActiveStatus(bool newBehaviour);	
+
+
 };

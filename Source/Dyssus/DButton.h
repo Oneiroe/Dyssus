@@ -68,17 +68,19 @@ public:
 					class UPrimitiveComponent* OtherComp,
 					int32 OtherBodyIndex);
 
-	DECLARE_EVENT(ADButton, ButtonPressedEvent)
-	ButtonPressedEvent& OnButtonPressed() { return buttonPressedEvent; }
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FButtonPressedEvent);
+	FButtonPressedEvent& OnButtonPressed() { return buttonPressedEvent; }
 
-	DECLARE_EVENT(ADButton, ButtonReleasedEvent)
-	ButtonReleasedEvent& OnButtonReleased() { return buttonReleasedEvent; }
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FButtonReleasedEvent);
+	FButtonReleasedEvent& OnButtonReleased() { return buttonReleasedEvent; }
 
 private:
 
-	ButtonPressedEvent buttonPressedEvent;
+	UPROPERTY(BlueprintAssignable)
+	FButtonPressedEvent buttonPressedEvent;
 
-	ButtonReleasedEvent buttonReleasedEvent;
+	UPROPERTY(BlueprintAssignable)
+	FButtonReleasedEvent buttonReleasedEvent;
 
 	int NumOverlappingActors;
 

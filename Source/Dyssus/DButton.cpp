@@ -96,8 +96,8 @@ void ADButton::SetPressed(bool newPressed)
 {
 	IsPressed = newPressed;
 
-	if (IsPressed) OnButtonPressed();
-	else OnButtonReleased();
+	if (IsPressed) OnButtonPressed().Broadcast();
+	else OnButtonReleased().Broadcast();
 }
 
 bool ADButton::IsButtonPressed()
