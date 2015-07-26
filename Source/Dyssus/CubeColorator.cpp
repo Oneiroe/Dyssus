@@ -21,14 +21,14 @@ void ACubeColorator::BeginPlay()
 	
 	for (ADButton* i : InputButtonsActors)
 	{
-		i->OnButtonPressed().AddDynamic(this, &ACubeColorator::OnButtonPressEvent); //  handshacking between the colorator and its buttons
+		i->OnButtonStatusChange().AddDynamic(this, &ACubeColorator::OnInputChange); //  handshacking between the object and its buttons
 	}
 }
 
-// Thrown when a button is pressed
-void ACubeColorator::OnButtonPressEvent()
+// Thrown when an associated button changes state
+void ACubeColorator::OnInputChange()
 {
-	UDStaticLibrary::Print(this->GetName()+"> button pressed"); // just a debug print to verify the thrown of the event
+	EventBehaviorChange.Broadcast(); //  signal to the game that the object inputs are changed and the object itself has to re-check its status(doing it via levelblueprint)
 }
 
 // Called every frame

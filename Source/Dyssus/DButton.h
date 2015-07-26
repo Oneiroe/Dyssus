@@ -68,19 +68,19 @@ public:
 					class UPrimitiveComponent* OtherComp,
 					int32 OtherBodyIndex);
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FButtonPressedEvent);
-	FButtonPressedEvent& OnButtonPressed() { return buttonPressedEvent; }
+	// delegate to signal the button status change to associated objects
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FButtonStatusChangeDelegate);
+	
+	// return the reference to the button status delegate object
+	FButtonStatusChangeDelegate& OnButtonStatusChange() { return EventButtonStatusChange; }
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FButtonReleasedEvent);
-	FButtonReleasedEvent& OnButtonReleased() { return buttonReleasedEvent; }
+
 
 private:
 
+	// event thrown on button status change
 	UPROPERTY(BlueprintAssignable)
-	FButtonPressedEvent buttonPressedEvent;
-
-	UPROPERTY(BlueprintAssignable)
-	FButtonReleasedEvent buttonReleasedEvent;
+	FButtonStatusChangeDelegate EventButtonStatusChange;
 
 	int NumOverlappingActors;
 

@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "DStaticLibrary.h"
 #include "Colorable.h"
+#include "DButton.h"
 #include "DBarrier.generated.h"
 
 UCLASS(Blueprintable)
@@ -77,5 +78,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void OnEndOverlap(class AActor * OtherActor,
 					class UPrimitiveComponent* OtherComp,
-					int32 OtherBodyIndex);
+					int32 OtherBodyIndex);	
+	
+	// Thrown when an input button has changed status
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBarrierBehaviorChangeDelegate);
+
+private:
+	// Thrown receiving an associated button status change signal
+	UFUNCTION(BlueprintCallable, category = "Input Signal Handling")
+	void OnInputChange();
+
+	// event thrown when an input button has changed status
+	UPROPERTY(BlueprintAssignable)
+	FBarrierBehaviorChangeDelegate EventBehaviorChange;
+
+	// Buttons of which input will be handled
+	UPROPERTY(EditAnywhere, category = "Input Signal Handling")
+	TArray<ADButton*> InputButtonsActors;
+
+
 };

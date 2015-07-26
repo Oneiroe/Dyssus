@@ -5,93 +5,15 @@
 #include "GameFramework/Actor.h"
 #include "Cube.h"
 #include "DStaticLibrary.h"
-
 #include "DButton.h"
-
 #include "CubeColorator.generated.h"
-
-UENUM()
-enum InputHandlingBehaviour{
-		LOGIC_AND                UMETA(DisplayName = "AND"),
-		LOGIC_OR                 UMETA(DisplayName = "OR"),
-		CUSTOM_LOGIC             UMETA(DisplayName = "Custom")
-};
-
-UENUM()
-enum InputCorrespondingAction{
-	CHANGE_COLOR	UMETA(DisplayName = "Change Color"),
-	SWITCH_ON		UMETA(DisplayName = "Switch ON"),
-	SWITCH_OFF		UMETA(DisplayName = "Switch OFF")
-};
-
-USTRUCT()
-struct FInput
-{
-	GENERATED_USTRUCT_BODY();
-
-	// Combination of input
-	UPROPERTY(EditAnywhere)
-	TArray<bool> ButtonsStatus;
-
-	// How to combine the inputs received
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<InputHandlingBehaviour> HandlingBehaviour;
-
-	// How to combine the inputs received
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<InputCorrespondingAction> ActionToPerform;
-
-	// If the input is active or not
-	UPROPERTY(EditAnywhere)
-	bool Switcher;
-};
-
-
 
 UCLASS()
 class DYSSUS_API ACubeColorator : public AActor
 {
 	GENERATED_BODY()
 
-private:
-	
-
-	// Define if the colorator is active of not
-	UPROPERTY(EditAnywhere)
-	bool IsActive;
-
-	// Material that define the color used to color the cube
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<DTypes::DCOLOR> ColoratorColor;
-
-	// Sound played on colorator activation
-	UPROPERTY(EditAnywhere)
-	class USoundBase * SoundStartUp;
-
-	// Sound played on colorator deactivation
-	UPROPERTY(EditAnywhere)
-	class USoundBase * SoundShoutdown;
-
-	// Sound played changing color
-	UPROPERTY(EditAnywhere)
-	class USoundBase * SoundChangeColor;
-
-	// Sound played on colorator utilization
-	UPROPERTY(EditAnywhere)
-	class USoundBase * SoundUsed;
-
-	// Actor of which input will be handled
-	UPROPERTY(EditAnywhere)
-	TArray<AActor*> InputActors; // DELETION PENDING in favor of more specific InputButtonsActors
-
-	// Buttons of which input will be handled
-	UPROPERTY(EditAnywhere)
-	TArray<ADButton*> InputButtonsActors;
-
 public:	
-	// Thrown when an associated button is pressed
-	UFUNCTION()
-	void OnButtonPressEvent();
 
 	// Sets default values for this actor's properties
 	ACubeColorator();
@@ -125,5 +47,46 @@ public:
 	UFUNCTION(BlueprintCallable, category = "Colorator")
 	void SetActiveStatus(bool newBehaviour);	
 
+	// Thrown when an input button has changed status
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FColoratorBehaviorChangeDelegate);
+
+
+private:
+	// Thrown receiving an associated button status change signal
+	UFUNCTION(BlueprintCallable, category = "Input Signal Handling")
+	void OnInputChange();
+
+	// event thrown when an input button has changed status
+	UPROPERTY(BlueprintAssignable)
+	FColoratorBehaviorChangeDelegate EventBehaviorChange;
+	
+	// Buttons of which input will be handled
+	UPROPERTY(EditAnywhere, category = "Input Signal Handling")
+	TArray<ADButton*> InputButtonsActors;
+
+
+	// Define if the colorator is active of not
+	UPROPERTY(EditAnywhere)
+	bool IsActive;
+
+	// Material that define the color used to color the cube
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<DTypes::DCOLOR> ColoratorColor;
+
+	// Sound played on colorator activation
+	UPROPERTY(EditAnywhere)
+	class USoundBase * SoundStartUp;
+
+	// Sound played on colorator deactivation
+	UPROPERTY(EditAnywhere)
+	class USoundBase * SoundShoutdown;
+
+	// Sound played changing color
+	UPROPERTY(EditAnywhere)
+	class USoundBase * SoundChangeColor;
+
+	// Sound played on colorator utilization
+	UPROPERTY(EditAnywhere)
+	class USoundBase * SoundUsed;
 
 };

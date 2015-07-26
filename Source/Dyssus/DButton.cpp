@@ -95,9 +95,7 @@ class UPrimitiveComponent* OtherComp,
 void ADButton::SetPressed(bool newPressed)
 {
 	IsPressed = newPressed;
-
-	if (IsPressed) OnButtonPressed().Broadcast();
-	else OnButtonReleased().Broadcast();
+	OnButtonStatusChange().Broadcast(); // throws the signal of button status change to all the associated objects
 }
 
 bool ADButton::IsButtonPressed()

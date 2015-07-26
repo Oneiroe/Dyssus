@@ -38,6 +38,16 @@ void ADGate::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	for (ADButton* i : InputButtonsActors)
+	{
+		i->OnButtonStatusChange().AddDynamic(this, &ADGate::OnInputChange); //  handshacking between the colorator and its buttons
+	}
+}
+
+// Thrown when an associated button changes state
+void ADGate::OnInputChange()
+{
+	EventBehaviorChange.Broadcast(); //  signal to the game that the object inputs are changed and the object itself has to re-check 
 }
 
 // Called every frame

@@ -37,6 +37,16 @@ void ADBarrier::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (ADButton* i : InputButtonsActors)
+	{
+		i->OnButtonStatusChange().AddDynamic(this, &ADBarrier::OnInputChange); //  handshacking between the object and its buttons
+	}
+}
+
+// Thrown when an associated button changes state
+void ADBarrier::OnInputChange()
+{
+	EventBehaviorChange.Broadcast(); //  signal to the game that the object inputs are changed and the object itself has to re-check its status(doing it via levelblueprint)
 }
 
 // Called every frame

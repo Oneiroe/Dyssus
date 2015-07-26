@@ -3,6 +3,9 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+
+#include "DButton.h"
+
 #include "DGate.generated.h"
 
 UCLASS()
@@ -76,4 +79,21 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool OpenOnProximity;
+
+	// Thrown when an input button has changed status
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGateBehaviorChangeDelegate);
+
+private:
+	// Buttons of which input will be handled
+	UPROPERTY(EditAnywhere, category="Input Signal Handling")
+	TArray<ADButton*> InputButtonsActors;
+
+	// Thrown when an associated button is pressed
+	UFUNCTION(BlueprintCallable, category = "Input Signal Handling")
+	void OnInputChange();
+
+	// event thrown when an input button has changed status
+	UPROPERTY(BlueprintAssignable)
+	FGateBehaviorChangeDelegate EventBehaviorChange;
+
 };
