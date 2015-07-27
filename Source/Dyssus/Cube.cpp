@@ -46,6 +46,7 @@ void ACube::OnConstruction(const FTransform& Transform)
 		SetRootComponent(StaticMesh);
 		StaticMesh->SetWorldTransform(Transform);
 		StaticMesh->SetStaticMesh(SMesh);
+		StaticMesh->SetSimulatePhysics(true);
 	}
 
 	// Paint cube

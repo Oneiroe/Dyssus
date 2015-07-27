@@ -93,6 +93,8 @@ private:
 
 	float InitialZ;
 
+	bool ReachedState;
+
 	// This indicates whether the button is currently pressed (true) or released (false)
 	UPROPERTY(EditAnywhere, Category = State)
 	bool IsPressed;

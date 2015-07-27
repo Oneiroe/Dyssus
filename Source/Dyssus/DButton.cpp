@@ -29,6 +29,8 @@ ADButton::ADButton()
 	NumOverlappingActors = 0;
 	DeltaHeight = 20;
 	InterpSpeed = 100;
+
+	ReachedState = true;
 }
 
 // Called when the game starts or when spawned
@@ -44,8 +46,11 @@ void ADButton::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsPressed) PressButton(DeltaTime);
-	else ReleaseButton(DeltaTime);
+	if (!ReachedState)
+	{
+		if (IsPressed) PressButton(DeltaTime);
+		else ReleaseButton(DeltaTime);
+	}
 }
 
 void ADButton::OnConstruction(const FTransform& Transform)
@@ -94,6 +99,8 @@ class UPrimitiveComponent* OtherComp,
 
 void ADButton::SetPressed(bool newPressed)
 {
+	ReachedState = false;
+
 	IsPressed = newPressed;
 	OnButtonStatusChange().Broadcast(); // throws the signal of button status change to all the associated objects
 }
@@ -130,6 +137,8 @@ void ADButton::PressButton(float DeltaTime)
 	loc.Z = z;
 
 	SetActorLocation(loc);
+
+	if (z == InitialZ - DeltaHeight) ReachedState = true;
 }
 
 void ADButton::ReleaseButton(float DeltaTime)
@@ -139,4 +148,6 @@ void ADButton::ReleaseButton(float DeltaTime)
 	loc.Z = z;
 
 	SetActorLocation(loc);
+
+	if (z == InitialZ) ReachedState = true;
 }

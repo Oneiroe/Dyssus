@@ -98,4 +98,5 @@ private:
 	UPROPERTY(BlueprintAssignable)
 	FGateBehaviorChangeDelegate EventBehaviorChange;
 
+	bool ReachedState;
 };

@@ -31,6 +31,8 @@ ADGate::ADGate()
 	BoxTrigger->OnComponentEndOverlap.AddDynamic(this, &ADGate::OnEndOverlap);
 
 	OpenOnProximity = true;
+
+	ReachedState = true;
 }
 
 // Called when the game starts or when spawned
@@ -55,8 +57,11 @@ void ADGate::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	if (IsOpen) OpenGate(DeltaTime);
-	else CloseGate(DeltaTime);
+	if (!ReachedState)
+	{
+		if (IsOpen) OpenGate(DeltaTime);
+		else CloseGate(DeltaTime);
+	}
 }
 
 void ADGate::OnConstruction(const FTransform& Transform)
@@ -80,7 +85,10 @@ void ADGate::SetState(bool newState, bool snap)
 			Mesh1->SetRelativeLocation(Mesh1CloseOffset);
 			Mesh2->SetRelativeLocation(Mesh2CloseOffset);
 		}
+
+		ReachedState = true;
 	}
+	else ReachedState = false;
 }
 
 void ADGate::OpenGate(float DeltaTime)
@@ -103,6 +111,8 @@ void ADGate::OpenGate(float DeltaTime)
 	FVector mesh2NewRL = FVector(offset2X, offset2Y, offset2Z);
 
 	Mesh2->SetRelativeLocation(mesh2NewRL);
+
+	if ((mesh1NewRL - Mesh1OpenOffset) == FVector::ZeroVector) ReachedState = true;
 }
 
 void ADGate::CloseGate(float DeltaTime)
@@ -125,6 +135,8 @@ void ADGate::CloseGate(float DeltaTime)
 	FVector mesh2NewRL = FVector(offset2X, offset2Y, offset2Z);
 
 	Mesh2->SetRelativeLocation(mesh2NewRL);
+
+	if ((mesh1NewRL - Mesh1CloseOffset) == FVector::ZeroVector) ReachedState = true;
 }
 
 void ADGate::OnBeginOverlap(class AActor* OtherActor,
