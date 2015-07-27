@@ -15,7 +15,9 @@ class IColorable
 {
 	GENERATED_IINTERFACE_BODY()
 
+	/** Returns the color this colorator will paint with overlapping meshes */
 	virtual DTypes::DCOLOR GetColor();
 
+	/** Sets the color this colorator will paint with overlapping meshes */
 	virtual void SetColor(DTypes::DCOLOR dColor);
 };

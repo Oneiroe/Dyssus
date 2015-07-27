@@ -74,16 +74,6 @@ void ACube::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-TEnumAsByte<DTypes::DCOLOR> ACube::GetDefaultColor()
-{
-	return DDefaultColor;
-}
-
-void ACube::SetDefaultColor(DTypes::DCOLOR color)
-{
-	DDefaultColor = color;
-}
-
 void ACube::InterfacedDestroy()
 {
 	this->Destroy();

@@ -22,9 +22,11 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	/** Height of the button */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float DeltaHeight;
 
+	/** Button press/release speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float InterpSpeed;
 
@@ -32,6 +34,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = State)
 	bool IsButtonPressed();
 
+	/** Sets whether this button is pressed */
 	UFUNCTION(BlueprintCallable, Category = State)
 	void SetPressed(bool newPressed);
 

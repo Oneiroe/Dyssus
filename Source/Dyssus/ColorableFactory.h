@@ -16,6 +16,7 @@ public:
 
 	GENERATED_BODY()
 
+	/** Compares the colors of the two actors */
 	UFUNCTION(BlueprintCallable, Category = Colors)
 	static bool CompareColors(AActor* a, AActor* b);
 };

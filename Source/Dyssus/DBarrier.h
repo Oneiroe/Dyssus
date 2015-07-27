@@ -26,48 +26,55 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	/** Returns the current color of the barrier */
 	UFUNCTION(BlueprintCallable, Category = Colors)
 	virtual DTypes::DCOLOR GetColor() override;
 
+	/** Sets the color of the barrier */
 	UFUNCTION(BlueprintCallable, Category = Colors)
 	virtual void SetColor(DTypes::DCOLOR dColor) override;
 
+	/** Current color of the barrier */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TEnumAsByte<DTypes::DCOLOR> DColor;
 
+	/** Static mesh */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UStaticMeshComponent* StaticMeshComponent;
 
+	/** Box component for overlap events */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UBoxComponent* BoxComponent;
 
+	/** Sounds to be used for barrier interactions */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* OverlapSound;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* OverlapDropObjSound;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* ChangeColorSound;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* ActivatedSound;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* DeactivatedSound;
 
+	/** Whether this barrier is crossable */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool IsCrossable;
 
+	/** Whether this barrier is active */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool IsActivated;
 
+	/** Array of materials, one per each color */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TArray<UMaterial*> BarrierMaterials;
 
+	/** Set whether this barrier is crossable */
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void SetCrossable(bool newCrossable);
 
+	/** OnBeginOverlap callback */
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void OnBeginOverlap(class AActor* OtherActor,
 						class UPrimitiveComponent* OtherComp,
@@ -75,6 +82,7 @@ public:
 						bool bFromSweep,
 						const FHitResult &SweepResult);
 
+	/** OnEndOverlap callback */
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void OnEndOverlap(class AActor * OtherActor,
 					class UPrimitiveComponent* OtherComp,

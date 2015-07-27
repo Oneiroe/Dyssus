@@ -20,6 +20,7 @@ private:
 
 	UMaterial* Material;
 
+	/** Whether this cube can change color */
 	UPROPERTY(EditAnywhere)
 	bool CanChangeColor;
 
@@ -27,16 +28,19 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	FVector StartingLocation;
 
+	/** Initial rotation of the cube on level start */
 	UPROPERTY(VisibleAnywhere)
 	FRotator StartingRotation;
 
-	// Location that the cube will reach on respawn
+	// Location of the cube on respawn
 	UPROPERTY(EditAnywhere)
 	FVector RespawnLocation;
 
+	// Rotation of the cube on respawn
 	UPROPERTY(EditAnywhere)
 	FRotator RespawnRotation;
 
+	/** Whether this cube is respawnable */
 	UPROPERTY(EditAnywhere)
 	bool Respawnable;
 
@@ -57,42 +61,41 @@ private:
 
 public:
 
+	/** Static mesh of the cube */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rendering)
 	class UStaticMesh* SMesh;
 
+	/** Destructible component of the cube */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Rendering)
 	class UDestructibleMesh* DMesh;
 
+	/** Default color of the cube */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TEnumAsByte<DTypes::DCOLOR> DDefaultColor;
 
-	UFUNCTION(BlueprintCallable, Category = Colors)
-	TEnumAsByte<DTypes::DCOLOR> GetDefaultColor();
-
-	UFUNCTION(BlueprintCallable, Category = Colors)
-	void SetDefaultColor(DTypes::DCOLOR defColor_);
-
+	/** Current color of the cube */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TEnumAsByte<DTypes::DCOLOR> DColor;
 
+	/** Returns the current color of the cube */
 	UFUNCTION(BlueprintCallable, Category = Colors)
 	virtual DTypes::DCOLOR GetColor() override;
 
+	/** Sets the color of the cube */
 	UFUNCTION(BlueprintCallable, Category = Colors)
 	virtual void SetColor(DTypes::DCOLOR dColor_) override;
 
+	/** Array of cube materials, one per each color */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colors)
 	TArray<UMaterial*> CubeMaterials;
 
+	/** Explosion parameters */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
 	float BaseDamage;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
 	float DamageRadius;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
 	float ImpulseStrength;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Damage)
 	bool CanBeDestroyed;
 
@@ -112,6 +115,7 @@ public:
 	//UFUNCTION(BlueprintCallable, Category=Cube)
 	virtual void InterfacedDestroy() override;
 
+	/** Called when it's time to destroy this cube */
 	UFUNCTION(BlueprintCallable, category = "Cube")
 	virtual void InterfacedDestroy(FVector HitLocation, FVector NormalImpulse) override;
 

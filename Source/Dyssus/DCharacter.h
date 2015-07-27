@@ -94,21 +94,21 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement)
     float AirControl;
 
+	/** Get sound based on surface material */
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
 
+	/** Set of parameters for the physics handle */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
 	float LinearDamping;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
 	float LinearStiffness;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
 	float AngularDamping;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
 	float AngularStiffness;
 
+	/** Walk/Run interpolation speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
 	float InterpolationSpeed;
 

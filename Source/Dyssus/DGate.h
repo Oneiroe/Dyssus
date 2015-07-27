@@ -62,6 +62,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector Mesh2CloseOffset;
 
+	/** Open/Close interpolation speed */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float InterpSpeed;
 
@@ -77,6 +78,7 @@ public:
 					class UPrimitiveComponent* OtherComp,
 					int32 OtherBodyIndex);
 
+	/** Whether this gate should open on character proximity, or could only be switched through inputs (e.g. DButtons) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool OpenOnProximity;
 
