@@ -64,7 +64,7 @@ void ACubeColorator::SetActiveStatus(bool newBehaviour)
 	else if (SoundShoutdown) UGameplayStatics::PlaySoundAtLocation(this, SoundShoutdown, GetActorLocation());
 }
 
-void ACubeColorator::ReceiveActorBeginOverlap(AActor * OtherActor)
+void ACubeColorator::NotifyActorBeginOverlap(AActor * OtherActor)
 {
 	if (!IsActive) return;
 	
