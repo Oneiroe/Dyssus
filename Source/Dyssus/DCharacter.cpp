@@ -380,10 +380,11 @@ void ADCharacter::EnableFiring()
 	CanShoot = true;
 }
 
-void ADCharacter::PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material)
+void ADCharacter::PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, EPhysicalSurface surfaceType)
 {
-	USoundCue* sound;
-	EPhysicalSurface surfaceType = material->SurfaceType;
-	sound = sounds[surfaceType];
-	if (sound) PlaySoundAtLocation(sound, location);
+	if (FootstepSounds.Num() > surfaceType)
+	{
+		USoundCue* sound = FootstepSounds[surfaceType];
+		if (sound) PlaySoundAtLocation(sound, location);
+	}
 }

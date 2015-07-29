@@ -64,7 +64,7 @@ public:
 	float RunWalkInterpSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
-	TArray<USoundCue*> sounds;
+	TArray<USoundCue*> FootstepSounds;
 
 	// Max distance for grabbing objects
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -96,7 +96,7 @@ public:
 
 	/** Get sound based on surface material */
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
-	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, UPhysicalMaterial* material);
+	void PlayFootstepSoundBasedOnSurfaceMaterial(FVector location, EPhysicalSurface surfaceType);
 
 	/** Set of parameters for the physics handle */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PhysicsHandle)
