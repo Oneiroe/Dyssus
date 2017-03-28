@@ -1,4 +1,4 @@
-# Dyssus
-Dyssus: a puzzling videgame about consciousness, robots and cubes(!?)
+# Ex-Project Dyssus
+A 3D puzzle videogame prototype in Unreal Engine 4.
 
-In development since April 2015.
+Developed from April 2015 to August 2015.
